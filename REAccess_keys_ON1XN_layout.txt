@@ -1,0 +1,24 @@
+RE4 ACCESS - THE LAYOUT YOU SUGGESTED
+
+To use it: rename this file to REAccess_keys.txt in reframework\data, then
+restart the game. To go back to the normal keys, rename or delete that file.
+
+Your idea          What this file does
+H = health         health = H
+Facing = J         facing = J
+P, Shift+P         walk = P. P faces the selected thing, Shift+P starts or stops the route.
+Comma to '         items = '
+Slash = fight      fight_advice = /
+
+Changes you did not ask for, needed because those keys moved:
+Route status, was J, is now U. Shift+U turns walking reports on or off. Shift+N also says the distance.
+Short messages, was Slash, is now F10. F4 also does it. Shift+F10 is what to do now.
+Money stays on Equals, because Shift+H is not possible with this file yet.
+
+health = H
+facing = J
+walk = P
+items = '
+fight_advice = /
+route_status = U
+short_messages = F10

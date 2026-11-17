@@ -1,0 +1,32 @@
+RESIDENT EVIL 4 - CHAPTER 9 - THE HEDGE MAZE  (mapped by Claude 11/11)
+
+Press N at every step. N speaks the next place, you hold W to walk there.
+
+The order N will give you:
+1. First Aid Spray, down in the maze close to the start. Press F to pick it up.
+   (There is also a typewriter right at the start room, if you want to save first.)
+2. The middle flag lever. Up a ladder, on top of the hedges. Press F.
+3. The far flag lever, at the north-east end of the maze. Press F.
+4. The lever Ashley holds, at the west side. Press F. Ashley holds it down
+   and a gate opens.
+5. Walk through the gate Ashley holds open, going north.
+6. The first flag lever. Press F. Now all 3 flags are up.
+7. The door the flags opened. Go through it, going east.
+8. The castle gate, then past it.
+9. A locked door with a slide lock. Press F to slide the lock, then go through.
+10. N then says "End of my map. Tell Claude."
+    The castle part after this was not loaded in the game yet, so I could not map it.
+
+Danger: wolves (Colmillos) jump out of the hedges and out of cages.
+You have little health. Use the First Aid Spray when health gets low.
+
+Nothing here has been walked yet. If N says "Stop here" or "Blocked",
+tell Claude what it said.
+
+CASTLE (added 11/11 after Claude walked it)
+- Castle doors open by HOLDING W and walking into them. F does nothing on them.
+- The hall-end door leads to the DINING HALL (autosave there).
+- Dining hall puzzle: 8 chairs with bells. Ashley sits in one right chair, you in the other.
+  N: "Ashley's chair" - hold Left Control until Ashley answers.
+  N: "your chair" - press F to sit, then F to ring.
+- That opens a case with a Serpent head. N takes you to it (F), then to the statue in the hall (F).

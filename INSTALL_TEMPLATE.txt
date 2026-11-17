@@ -1,0 +1,25 @@
+RE4 ACCESS 0.25.4 - blind accessibility mod for Resident Evil 4 (2023 remake), Steam PC version.
+Speaks through JAWS. Without JAWS it uses the Windows voice (SAPI).
+
+INSTALL
+1. Find the game folder: in Steam, right-click Resident Evil 4, Manage, Browse local files.
+   Usually: C:\Program Files (x86)\Steam\steamapps\common\RESIDENT EVIL 4  BIOHAZARD RE4
+2. Copy EVERYTHING in this folder (dinput8.dll and the reframework folder) into the game folder.
+   Say yes if Windows asks to merge folders.
+   dinput8.dll is REFramework (the free mod loader, github.com/praydog/REFramework),
+   the build this mod was tested with.
+3. Start the game from Steam. After a few seconds the mod says "RE4 Access loaded".
+
+FIRST TIME: SET TWO GAME KEYS
+The mod's aim lock expects Aim on L and Fire on K (keyboard only, no mouse).
+In the game: Options, Controls, Key Bindings (the mod reads this screen aloud):
+set "Ready Weapon / Aim" to L and "Attack / Fire" to K.
+
+KEYS AND HELP
+Read docs\README_KEYS_AND_HELP.txt first. Guides for hard fights are in the docs folder
+(FIGHT_GUIDE, LAKE_MONSTER_GUIDE, SIEGE_GUIDE, CHAPTER6_CHASE_GUIDE). TESTER_NOTES says what is not finished.
+Most used: N = next step, hold W to walk the route. O = objective. H = where am I.
+L = aim (locks onto enemies), K = fire, F = interact or kick, Tab = case, M = map.
+
+REMOVE
+Delete dinput8.dll and the reframework folder from the game folder.

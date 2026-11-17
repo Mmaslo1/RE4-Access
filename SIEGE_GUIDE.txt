@@ -1,0 +1,41 @@
+SIEGE IN LUIS'S HOUSE - "Stand your ground" (Chapter 5)
+Won live by Claude on 10/22/2026 (Assisted difficulty), about 5 minutes. This is what worked.
+
+NUMBER KEYS (checked by pressing them; the mod says the list when the siege starts)
+  1 = SG-09 R handgun
+  2 = Flash Grenade
+  3 = W-870 shotgun
+  4 = Hand Grenade
+After you pick up more grenades they go on the same keys.
+
+BEFORE YOU GO IN (at the checkpoint outside the house)
+1. Heal to full. Tab opens the case. E switches to Craft. Pick "Mixed Herb (G+R+Y)"
+   (Green + Red + Yellow) and HOLD Enter about 2 seconds. Then Escape, Tab,
+   go to the Mixed Herb, Enter, Use. It heals fully and raises your maximum health.
+2. Walk into the house with N. A cutscene starts the siege.
+
+DURING THE SIEGE
+- There is no way out. You win by surviving until a cutscene ends it (about 5 minutes).
+  A second short cutscene comes in the middle; keep going after it.
+- Villagers come in at once, from all sides. Do NOT walk around: stand and fight.
+- Hold L (the mod locks onto the nearest enemy), press K again and again.
+  Press F after each hit: when an enemy is stunned, F is a kick that knocks a group down.
+- When 3 or more are close but not touching you: press 4, hold L, press K to throw
+  a Hand Grenade. Then press 1 to go back to the handgun.
+- When 2 or more are right on you: press 3 for the shotgun. Press 1 after.
+- When you hear "Empty, press R": press R.
+- When you hear "Grabbed! Space": tap Space.
+- When health is low (about a third): press Tab. The game PAUSES while the case is open,
+  so take your time: use a healing item (the Chicken Egg works), Escape back.
+- Pick up what enemies drop (F when the mod says "F ready: Item"): ammo and herbs.
+- Luis fights with you and helps when you are grabbed: stay near him.
+
+THE WINDOWS (optional)
+Wooden Planks lie on the table at the start. F takes them (only when no enemy is touching
+you). Then F at a window opens a list: pick Wooden Planks, Use. You can't do it while an
+enemy is at that window. A blocked window only holds for a short time, so fighting matters
+more. N during the siege walks you to planks or a window only when no enemy is within 4 m.
+
+AFTER
+The chapter end screen: Shift opens the Typewriter. The mod now says the selected item
+("Save Game, 1 of 3") and each save slot ("Slot 9 of 20, empty"). Pick an empty slot.

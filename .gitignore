@@ -1,0 +1,19 @@
+﻿# Backups and logs (stay on this PC only)
+*.bak*
+_lua_backup*/
+chase_logs/
+NVDA_Test/
+tools/
+*.log
+# Build leftovers
+plugin/*.obj
+plugin/*.exp
+plugin/*.lib
+plugin/*.dll
+# Private notes
+FRIEND_FEEDBACK*
+SESSION_NOTES*
+CHANGELOG.txt
+build_tester_package.ps1
+# Text pulled from the game (Capcom's, not ours)
+REAccess_lang_English.json

@@ -1,0 +1,118 @@
+RESIDENT EVIL 4 - CHAPTER 3: WHERE WE ARE (updated October 18 2026, 8 PM)
+
+DONE today: church corner (fallen shelf), barn trapdoor, ladder down,
+tunnel, cliff path, the tripwire bomb on the way to the quarry.
+
+STUCK AT: the end of a narrow path just before the Quarry. A wooden log
+gate blocks it. The game keeps that gate (and a second one beside it)
+closed for all of chapter 3 - it is not the way.
+
+NEXT TIME:
+1. Start the game, choose Continue. You start back near the barn tunnel.
+2. Tell Claude before you play. Claude tests a small side opening a few
+   meters before the log gate (on the left as you face the gate): a
+   waist-high rock ledge with a lit cave behind it. It may be climbed with F.
+3. After the quarry: Merchant hideout, then the lake jetty, boat fuel at
+   the Fish Farm, then the lake boss.
+
+=== 10/19 8:18 AM - PAST THE BLOCKED LOG GATE (no cheat) ===
+How: at the rocky corner next to the log gate there is a knee-high pile of fallen rocks.
+Hold W walking into it, and while still holding W, tap F. Leon climbs up.
+Then walk through the open gate on the right. You come out at the quarry entrance.
+Game is paused there now. Two sleeping wolves are ahead in the big open area.
+
+=== 10/19 2:37 PM - Lake binoculars FIXED ===
+You were in the right place: the lake lookout binoculars start the story scene.
+Why F never came: the game only offers F on one small spot about 1 meter in front of
+the binoculars, with Leon facing the lake. The mod turned you toward the binoculars
+instead. Now N (or the cue) walks you onto that spot and faces the lake.
+Inside the binoculars the scene starts only when the view is on the boat and zoomed in
+(mouse wheel). The mod now does this for you: it says "Turning you to the boat on the
+lake and zooming in", then "On the boat on the lake". Hold still and the scene plays.
+Escape leaves the binoculars.
+Claude played the scene once to test it. Leon is at the lookout, after the scene.
+
+=== 10/19 2:45 PM - Next: Boat Fuel ===
+Objective now: Cross the lake. You need Boat Fuel first.
+A note near the lookout says: the boat fuel is stored with the generator fuel inside
+the processing building at the fish farm.
+Press N: it now says "Boat Fuel, in the fish farm building, 127 meters" and walks you
+toward it (only part of the way is known, press N again when it stops).
+After you have the fuel, go to the boat at the lake dock.
+N no longer sends you back to binoculars you already used.
+
+=== 10/19 2:58 PM - Into the swamp ===
+Why "no route found": the Boat Fuel is past a swamp. From the dock you get into the
+swamp by walking off the edge of the dock (about 5 meters down), and the route finder
+did not know that. Now N walks you to that edge and says "Hold W to walk off the edge".
+Claude walked Leon off the edge. Leon is IN THE SWAMP now, game paused.
+Enemies in the swamp: about 7 villagers, one is a big strong one. Also crows.
+The fish farm building with the Boat Fuel is at the far side; its door has a padlock
+(kick it or shoot it). Press N to walk there.
+Also fixed: the lakeside gate opens with F. The mod used to say "step back and walk
+into it" over and over; now it says "Closed gate. Press F to open it" once.
+
+=== 10/19 3:10 PM - Fish farm door ===
+The padlock was kicked off and the door is OPEN (it was never locked after that).
+N now goes straight to the Boat Fuel (it used to lead to "the trail").
+Route: 10 meters inside the building. Hold W, then F to pick it up.
+
+=== 10/19 3:14 PM - Boat ===
+Boat Fuel picked up. N now leads to the boat (22 m from the lookout, down at the water)
+and says "Press F to get in the boat" when you are next to it.
+
+=== 10/19 3:35 PM - LAKE MONSTER DEFEATED, end of chapter ===
+The boat fight: your hot keys did not work because the mod did not know the boat
+camera and thought a cutscene was playing. Fixed. Now in the boat the mod says
+"In the boat". Hold L: the mod turns you to the monster and says "Fire, 24 meters".
+Press K to throw a harpoon. Keep doing that. If it says the monster is under water,
+wait and keep holding L.
+Claude fought it: died twice (once at 10 health left on the monster), won the third try.
+You are on the END OF CHAPTER screen. Choose Typewriter to SAVE, then Enter for the
+next chapter.
+
+=== 10/19 3:45 PM - SAVED: "Chapter 4 START" ===
+Claude saved at the end of Chapter 3. Slot: CHAPTER 4 START, 10/19 3:41 PM
+(it replaced the old 10/18 5:54 PM "Head for the church" save).
+HOW TO SAVE ON THE END OF CHAPTER SCREEN:
+  1. Press Shift. The Typewriter opens: Save Game, Storage, Customize Case.
+  2. Press Enter on Save Game.
+  3. Up and Down arrows pick a slot. The mod reads each slot.
+  4. Press Enter. If it asks to overwrite, Down arrow to Yes, then Enter.
+  5. Right mouse button closes the menus.
+OTHER KEYS ON THE END OF CHAPTER SCREEN:
+  Tab or I = chapter results (read aloud). Right mouse button closes them.
+  P = pause menu.  Enter = start the next chapter.
+Escape and Backspace do nothing on this screen.
+Chapter 3 results: 3 h 42 min, 40 enemies killed, 2 deaths, accuracy 44.7 percent,
+13 times damaged. Challenges done: Infested Inside (300 CP), Harpoon Hurler (500 CP).
+
+=== 10/19 4:00 PM - Chapter 4 door ===
+The door by the Police Cap note opens by walking into it. The open door then
+stood in the way; stepping diagonally to the right got past it. Then N leads on;
+a low passage needs E to crouch. Many villagers ahead (8, 78 to 120 m away).
+
+=== 10/19 4:25 PM - Chapter 4: boat trips, Apostate's Head ===
+BIG FIX: the mod said LEFT and RIGHT backwards everywhere ("ahead left" was really
+ahead right). Found by testing the boat. Fixed in all spoken directions.
+BOAT TRAVEL (new): get in the boat (F; the mod finds the F spot). Pick a place or item
+in a list. In the boat the mod says "landing for <thing>, ahead left, 40 meters,
+steer with A". Hold W, tap A or D as it says. At the landing it says
+"Let go of W and press F to get off". Tested: works.
+The Apostate's Head: on a stone stand up a ladder in the south cave. No landing next
+to it. Claude took the boat to the west cave landing; from there the way is an iron
+bar gate (226, 168) that is LOCKED, with about 5 villagers near it. Way to the Head
+not found yet.
+Also: walking scripts pressed W while the game was paused and opened PHOTO MODE.
+To leave photo mode: right mouse button, W to move up to Yes, Enter (mod now says this).
+
+=== 10/19 5:40 PM - Chapter 4 summary ===
+Heal: press I to open the case (not Tab). Mod now says this.
+Boat: "Boat" is in People and places. Pick it to walk to the boat, F to get in.
+In the boat pick a place or item: the mod plans a water route and says
+"ahead left, 40 meters, steer with A". At the landing: let go of W, press F.
+If it says Blocked: hold S 2 seconds, then W again.
+Symbol puzzle (8 symbols, like a clock): direction keys pick a symbol, W+D or W+A
+together for the in-between ones; Enter pushes. User solved it: Apostate's Head.
+Autosaved 5:32 PM. Next: Blasphemer's Head, small cave far north-east (iron gate in
+front, unknown how it opens). Then both heads go on the door at the objective.

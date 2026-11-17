@@ -1,0 +1,92 @@
+RE4 ACCESS 0.23.0 - NEW KEYS AND CHANGES
+Written 1 November 2026. Not yet run in the game.
+Do not send the zip to the tester until the test below is done.
+
+
+NEW KEYS
+F1        Reads all the settings and how they are set now.
+F2        Combat speech, full or quiet. Yours starts on full.
+          Quiet keeps danger warnings, such as grabbed, fire, traps and
+          dynamite, plus low health and "Enemy down".
+F3        Walking reports on or off. Same as Shift+J.
+F4        Short or full messages. Same as Slash.
+F5        Automatic or spoken turning. Same as Shift+Period.
+F6        Fight sound (the thud) on or off. Yours starts on.
+F7        Hit sound on or off. Yours starts off. A short click when you lose health.
+F8        How far single-category lists reach: 300, 100 or 60 meters. Yours starts on 300.
+Shift+N   While a route is running, says the remaining distance, same as J.
+          With no route, it works like N.
+          This also applies if you are holding Shift to run.
+
+All your old keys still work. Settings are saved between games.
+
+
+WHAT THE SOUNDS MEAN
+Thud        Not an attack. An enemy is within 7 meters on your floor, or within
+            20 meters and in your way. Repeats every 6 seconds.
+Buzz        You were grabbed, are burning, or are caught in a bear trap.
+            Now 0.3 seconds, was 0.5.
+Click       You just lost health. Only if F7 is on.
+
+
+WHAT CHANGED IN THE GAME
+- Report keys say nothing during cutscenes and in the shop.
+- In the pause menu they also say nothing, except Y, which repeats the last speech.
+- "Not in control" is gone.
+- The "game is paused" message for N, Backslash and L is gone.
+  Holding W in the pause menu still gives you a message.
+- Keys are not silenced in the inventory window yet.
+- The mod now speaks through NVDA when NVDA is running and JAWS is not.
+  JAWS still comes first whenever it is running.
+
+
+WHAT CHANGED ON YOUR COMPUTER
+- The mod's files in the game folder were updated.
+- The speech plugin now supports NVDA.
+- NVDA's helper file, nvdaControllerClient64.dll, is now in the game folder.
+- Added in reframework\data: the hit sound, the key file instructions, his
+  layout file, and a backup of the old grab sound.
+- Your saves, your NVDA and JAWS settings, and the game's own files were not touched.
+
+
+THE TEST, ABOUT 10 MINUTES, WITH NVDA
+Start up:
+1. Press Ctrl+Alt+N to start NVDA. If nothing happens, open NVDA from the Start menu.
+2. Press Insert+F4 to close JAWS.
+3. Start the game from Steam and load your Chapter 6 save.
+   If NVDA reads the menus, that part passes.
+
+In the game:
+1. Press F1. It should read the list of settings.
+2. Press F2. It should say "Quiet combat". Near enemies you should hear only
+   danger warnings and "Enemy down", plus the thud. Press F2 again for full speech.
+3. Press F7. You hear the click. Take a hit and you should hear it again.
+   Press F7 again to turn it off.
+4. If an enemy grabs you, the buzz should be shorter.
+5. Press Escape, then H, N and U. Those keys should say nothing.
+   Y should still repeat the last speech. Close the menu.
+6. Press N to start a route, then Shift+N. It should say the remaining distance.
+7. If a cutscene plays, press H, N and U. The mod should stay silent.
+   If none comes up, skip this one.
+
+When you are done:
+1. Close the game.
+2. Press Insert+Q and then Enter to close NVDA.
+3. Start JAWS again.
+4. Tell Claude which steps failed, if any. Claude reads the log.
+
+
+AFTER THE TEST
+Send him: Downloads\RE4Access_Test_Build_0.23.0.zip
+
+What he can read in the zip:
+- docs\README_KEYS_AND_HELP.txt: all the keys and what the sounds mean.
+- docs\TESTER_NOTES.txt: what is new, including NVDA and his layout.
+- reframework\data\REAccess_keys_example.txt: how to choose his own keys.
+- reframework\data\REAccess_keys_ON1XN_layout.txt: his layout with P and Shift+P.
+  He renames it to REAccess_keys.txt to turn it on.
+  It has not been tested in the game, and we do not know yet whether the game uses P.
+
+Then: the Chapter 6 chase, the boss fight and the start of Chapter 7,
+making everything you can interact with accessible, including treasures.
+Another zip with those fixes goes to him before Tuesday.

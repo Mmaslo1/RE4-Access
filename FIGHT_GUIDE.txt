@@ -1,0 +1,50 @@
+RE4 ACCESS - WHAT THE FIGHT WORDS MEAN, AND WHAT TO PRESS
+
+SOUNDS
+- Two low thuds = an enemy is close or in your way. Fight or back off.
+- No thuds = you can walk or run.
+
+WORDS
+- "3 enemies"          How many are near you. Just information.
+- "Close, ahead left"  An enemy is within 3 meters, in that direction.
+                       Do: hold L and press K (shoot), or Space + K (knife),
+                       or step away with S.
+- "Locked"             Your aim is ON an enemy now (you are holding L).
+                       Do: press K to shoot. Keep holding L.
+- "Hit"                Your shot hit. Keep shooting (K) until "Enemy down".
+- "Enemy down"         It fell or died. Next one.
+- "F ready: kick the enemy"
+                       The enemy is stunned. Do: press F NOW. The kick knocks
+                       down everyone around you and costs no bullets.
+                       Tip: shoot an enemy in the face or leg first; then this comes.
+- "Lunge, ahead right" An enemy is jumping at you to grab you.
+                       Do: move away to the side at once: hold A or D (with Shift = faster).
+- "Grabbed! Space"     It caught you. Do: press Space right away (knife free).
+- "Hit, health 30"     You got hurt; your health is now 30 percent.
+- "Dynamite! left"     An enemy is lighting dynamite.
+                       Do: hold L; when you hear "Fire" press K (shoot it in his hand),
+                       or run away sideways.
+- "Thrown! Run sideways now, hold Shift"
+                       Dynamite is in the air. Do: Shift + A or D right away.
+- "Aiming, wait" / "Steady. Fire."
+                       For dynamite: hold L, press K only when it says Fire.
+- "2 left", "1 left"   Bullets left in your gun.
+- "Empty, press R"     Gun empty. Press R to reload (if you have spare bullets).
+- "Empty, no spare ..." No bullets at all for this gun. Use the knife, kicks, grenades,
+                       or switch guns.
+
+WHY YOU KEEP DYING HERE
+- The Valley sends many enemies at once (4 to 8), and more come after you take
+  the emblem. You start with about 10 handgun bullets. That is not enough to shoot
+  them all.
+- The emblem, the ladder and the crank make you stand still. Enemies grab you then.
+
+WHAT HELPS MOST
+1. Use your GRENADES. You carry a Hand Grenade and a Flash Grenade.
+   - Flash Grenade: blinds every enemy near you for a few seconds. Then kick them,
+     or use those seconds to climb the ladder or turn the crank.
+   - Hand Grenade: kills or knocks down a group. Throw it at 3 or more enemies.
+   (Ask Claude to add a key that equips and throws them, if that is hard.)
+2. Kick instead of shooting: shoot once in the face/leg, then F when it says kick.
+3. Back up while fighting (S). Enemies in a line are easier than around you.
+4. Do not stand still near enemies. Clear them first, THEN ladder/emblem/crank.

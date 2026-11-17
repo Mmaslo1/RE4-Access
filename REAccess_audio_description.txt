@@ -1,0 +1,3 @@
+# RE4 Access audio descriptions for cutscenes.
+# [Kind_ID] title, then lines: frame | text. Written by Claude from the mod's cutscene recordings.
+# Scenes are added after the recorder has seen them once (REAccess_ad_record.txt).

@@ -1,0 +1,81 @@
+RE4 ACCESS - TEST BUILD NOTES
+
+This is a test build of a work in progress. Thanks for looking at it.
+
+HOW FAR IT GOES
+Version 0.26.0: the mod has been played through Chapter 8 (castle, Bindery
+stone table, the tower levers, the Armored Gigante and the cannon). Chapter 9
+(the hedge maze) is being mapped next. Chapter 8 tips: rocks from the giant only
+hit on the top floor; on the cannon follow the Left/Right/Up/Down calls and
+press K on "On target".
+
+WHAT WORKS AND WHAT DOES NOT YET
+- NEW in 0.25.3, from your feedback: on an N route, a stop chime (two bell
+  notes, high then low) plays where F is needed, and that "Stop here ... press F"
+  line is protected for a few seconds, so ordinary speech no longer cuts it off.
+  Danger warnings and fights still interrupt. Not tested in game yet: please
+  say if the chime is too often, too loud, or if anything important waits too long.
+- Documents picked up in the world are read aloud with F. Y repeats them.
+- The Files screen reader, the Minus key (missed documents) and Shift+Minus
+  (requests) are new. See the Documents and Requests part of the README.
+- Picture-only documents and treasure maps have no spoken descriptions yet.
+- Optional treasures are in the mod's lists, but are not announced on their own.
+- Chapter 6 chase: tested and passed. Mendez boss: beaten by the owner with the
+  mod's spoken warnings (MENDEZ_BOSS_GUIDE). New sounds: a high double beep for
+  the game's Evade prompt, a low beep for Move. Evade says E, which is not yet
+  confirmed as the working key on the keyboard.
+
+SPEECH
+The mod speaks through JAWS. Without JAWS it uses the Windows voice (SAPI).
+There is no direct NVDA support yet, so NVDA users get the Windows voice.
+
+THE SOURCE IS OPEN
+All of the mod is plain Lua, in reframework\autorun. The speech plugin source
+is in the source folder. Change or add whatever you like and send it back.
+
+THIS BUILD HAS NO UNLIMITED AMMO
+The owner's own copy has a Shift+X unlimited ammo option. It only switches on
+if the file reframework\data\REAccess_owner.txt exists, and that file is not
+in this package. The same file also turns on a developer command channel,
+so that channel is off here too.
+
+LANGUAGES
+Speech comes from reframework\data\REAccess_lang_<language>.json, named after the
+game's display language: REAccess_lang_German.json, and so on. Copy
+REAccess_lang_English.json, rename it, and fill in the right side of each line.
+{1} and {2} stand for names and numbers and may change order. Anything empty stays
+English and is listed in reframework\data\REAccess_lang_missing.txt. To force a
+language, put one word in reframework\data\REAccess_language.txt.
+No translations ship yet. Objective routes now work in any game language. Some
+checks still use English item names (herb notes, some key-item steps), so a few
+hints may be missing in another language.
+
+WHEN SOMETHING GOES WRONG
+Send the log file: re2_framework_log.txt, in the game folder. Lines from the
+mod start with [RE4Access]. Please say what you heard and what you pressed.
+
+NEW IN 0.23.0 (from your feedback)
+SETTINGS ON FUNCTION KEYS (new in 0.23.0, saved between games)
+F1   Says all the settings below and how they are set now.
+F2   Combat speech: full or quiet. Quiet keeps only danger (grabbed, fire, traps, dynamite, low health) and "Enemy down". Off by default.
+F3   Walking reports on or off (same as Shift+J).
+F4   Short or full messages (same as Slash).
+F5   Automatic or spoken turning (same as Shift+Period).
+F6   Fight sound on or off.
+F7   Hit sound on or off. Off by default. A short click when you lose health.
+F8   How far the lists reach for single categories: 300, 100 or 60 meters. The Everything list stays 60.
+Shift+N: while a route runs, the same as J. With no route it works like N.
+Keys stay silent during cutscenes, in the shop and in the pause menu (only Y works in the pause menu).
+
+WHAT THE SOUNDS MEAN
+Fight sound (a thud): NOT an attack. An enemy is within 7 meters on your floor, or within 20 meters and in your way. Repeats every 6 seconds.
+Grab buzz: you were grabbed, are burning, or are caught in a bear trap.
+Hit click (F7, if turned on): you just lost health.
+
+YOUR OWN KEYS
+See REAccess_keys_example.txt in reframework\data.
+Your suggested layout, with P and Shift+P, is ready in REAccess_keys_ON1XN_layout.txt in the same folder. Its first lines say how to turn it on.
+
+NVDA
+The mod now speaks through NVDA when NVDA is running. It needs nvdaControllerClient64.dll next to the game exe; it is in this package.
+

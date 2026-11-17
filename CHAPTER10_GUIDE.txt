@@ -1,0 +1,45 @@
+Resident Evil 4 Remake - Chapter 10 guide (Leon)
+Written by Claude, 11/14. From walkthroughs (TheGamer, Push Square, PowerPyx). Not tested in the game yet.
+In the game: press N. Where N has no exact spot yet, it reads this guide for your objective.
+
+PART 1: Objective "Head for the throne room"
+
+1. N: the ladder down to the Grand Hall, about 8 meters from where you start. Press F to kick it down, then F to climb down. This step is mapped.
+2. Optional: the Merchant beside the Chimera door.
+   - New stock.
+   - A request called Merciless Knight: a gold armor knight in the mausoleum, with two normal knights. Flash grenades stun all three. Shoot the parasite when the helmet comes off. They drop gems.
+3. Optional: in the library, the Cubic Device opens a box with the CQBR Assault Rifle. A second box in the study, the typewriter room upstairs, has the Golden Lynx treasure.
+4. Way on: through the double doors past the Chimera statue. Giant bugs attack, and the shotgun works well.
+5. The main door ahead is locked. Hop the railing on the left, kill two more bugs, and climb the stairs.
+6. A big room. There is a First Aid Spray in the glass cabinet left of the entrance. Leave by the door on the right.
+7. Stairs down. A swarm of bugs comes. Fight them from the space under the stairs so only a few reach you at a time.
+8. The ballroom. The gate at the far east end needs 2 levers:
+   - one on the upper balcony, at the end;
+   - one at the stairs on the south side.
+   Treasure: a Ruby in a hanging cage over the rubble in the middle (shoot the cage).
+9. The drawbridge. Shoot 2 counterweights. The second one is hidden low behind the wall: step back and to the left to reach it.
+10. The antechamber, a fight. 2 Garradors plus zealots who keep coming.
+   - Garradors are blind and follow sound.
+   - Shoot a bell: a Garrador charges it and gets stuck. Then hit the parasite on its back. Each bell works once.
+   - Hand grenades are good here.
+11. Each Garrador drops a Unicorn Horn. Put both horns in the statues on each side of the gate at the back.
+12. Go through that gate to the throne room. A scene plays: Leon falls into the depths.
+
+PART 2: Objective "Make your way to the surface"
+
+13. The depths. Follow the water path. Bug enemies hide in the water.
+14. A crack in a wall with light behind it: break through. An Elegant Crown, a treasure, lies on a body there. Take the Yellow Herb, then climb the ladder.
+15. A tunnel. Shoot the hanging cage in the first alcove on the left for a Red Beryl.
+16. The sewers. The Merchant and a typewriter: save here.
+17. Liquid nitrogen storage. Read the note on the table. At the fork turn right, go into the first side door, and pull the lever.
+18. The laboratory.
+   - Tentacles burst from the floor: keep moving.
+   - In the square room, go to the far right corner and pull the power switch.
+19. Verdugo, a boss.
+   - Run to a green switch on the wall: it sprays liquid nitrogen and freezes him. Then hit him.
+   - Turn the wheel on the exit door and head for the elevator.
+   - You can freeze him again at the nitrogen showers on the way, or just survive until the elevator comes.
+   - Killing him gives the Gold Monocle, worth a lot of money.
+20. Get into the elevator. The chapter ends.
+
+What I can't do yet: the exact N steps past the ladder. Those areas only load when Leon gets near them, so I map them live while you play, like Chapter 9.

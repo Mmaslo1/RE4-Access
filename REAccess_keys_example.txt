@@ -1,0 +1,29 @@
+RE4 ACCESS - CHOOSE YOUR OWN KEYS
+
+To use this: save a copy as REAccess_keys.txt in the same folder
+(reframework\data), remove the # from the lines you want, and change the key.
+Restart the game afterwards. Lines starting with # are ignored.
+No file means the normal keys.
+
+A key can be a letter, a number, F9 to F12, or one of: [ ] \ ' ; , . / = - `
+Do not pick a key the game uses, such as W, A, S, D, F, I, K, L or Space,
+or F1 to F8, which the mod uses for settings. Shift still works with the new key.
+Spoken hints still name the normal keys.
+
+# facing = H
+# repeat = Y
+# next_thing = ]
+# previous_thing = [
+# walk = \
+# fight_advice = '
+# list = ;
+# trail_back = B
+# route_status = J
+# objective = O
+# next_step = N
+# health = U
+# gun = X
+# money = =
+# items = ,
+# next_turn = .
+# short_messages = /

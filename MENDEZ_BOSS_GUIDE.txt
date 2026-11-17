@@ -1,0 +1,22 @@
+RE4 Access - Mendez boss fight, stage 2 (updated 11/1/2026)
+Everything here is a key you press or words the mod says.
+
+STAGE 1
+Keep doing what you do. You win it every time.
+
+STAGE 2: what the mod says and what you do
+"Stage 2"              Hold W for 2 seconds, then shoot: hold L, press K.
+Low beep, "Move!"      Let go of L. Hold Shift and A or D for 2 seconds. Use
+                       the other side next time. Then shoot again.
+"Barrel!"              Hold L and press K right away. This is working well:
+                       your logs show him staggered by it 3 times out of 4.
+High double beep,      Let go of L and press E. Do not press A or D.
+"Evade! E"             Your logs have not shown E pressed yet.
+"Fire behind you!"     Hold W. Do not back up with S in this stage.
+"Fire!"                Let go of L and hold W at once.
+"Heal now! Press I"    Press I and heal at once. It repeats until you do.
+"Mendez 50 percent"    His health.
+
+HONEST NOTE
+Not tested in the game yet. The Move timing comes from your logs: it now
+comes before the throw. E for Evade comes from walkthroughs, not from a test.

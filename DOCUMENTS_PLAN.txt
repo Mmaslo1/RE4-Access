@@ -1,0 +1,24 @@
+RE4 ACCESS - DOCUMENTS PLAN (October 31 2026)
+
+WHAT ALREADY WORKS
+Documents you pick up in the world are read aloud when you press F. Y repeats them.
+
+WHAT IS STILL NEEDED, IN ORDER
+1. Files screen. This is the list in the case menu where you read documents again.
+   The mod says nothing there now. The game's own screens for it are named
+   FileSelectGuiBehavior and FileDetailGuiBehavior. Claude needs the game running to
+   see how they work.
+2. Check every document up to Chapter 6. Claude has the game give up the text of each
+   document and looks for any that come out empty or wrong.
+3. Picture documents and treasure maps. These have no words in the game, so a sighted
+   player gets something we do not. Claude writes a spoken description of each one.
+4. Side requests and treasures. The blue request notes get a list you can read at any
+   time, and optional treasures get announced.
+
+WHAT THE TESTER PACKAGE NEEDS FIRST
+Start the game once with the new build. Confirm Shift+X still works on your copy, and
+that the mod loads with the owner file removed, with no unlimited ammo.
+
+BUILDING THE PACKAGE
+Claude runs build_tester_package.ps1. It makes Downloads\RE4Access_Test_Build_0.21.0.zip.
+Run it again after each change so the package stays current.

@@ -1,0 +1,147 @@
+TEST NOW (11/8): Great Hall upper floor. Press N: Dolphin gong spot -> L, K. N: chandelier, F. N: Snake gong spot -> L, K. N: through the gate.
+
+NVDA TEST (about 3 minutes)
+1. With JAWS running, press Ctrl+Alt+N to start NVDA. If that does nothing, open NVDA from the Start menu.
+2. Close JAWS with Insert+F4. You should now hear NVDA.
+3. Start the game from Steam. At the menus, NVDA should read the mod's speech.
+4. Close the game, press Insert+Q to close NVDA, and start JAWS again. Tell Claude: the log shows which reader spoke.
+
+0.23.0 - QUICK TEST (about 5 minutes, when rested)
+1. Press F1 in the game. It should read the settings. Press F2, then fight: you should hear only danger and Enemy down. Press F2 again for full speech.
+2. Press F7 and take a hit: a short click. Press F7 again to turn it off.
+3. Press H, N and U during a cutscene: silence. Press them in the pause menu: silence.
+4. Start a route with N, then press Shift+N: remaining distance.
+5. Get grabbed: the buzz should be shorter.
+
+TEST NEXT (October 21 2026) - way to the church, chapter 4
+Restart the game first, then Continue (autosave at the cliff landing).
+1. Get in the boat, press N, then Backslash: it should say it drives you to
+   the Merchant's dock and take you there. Tell me if it gets stuck.
+2. Get off with F, press N: "Next: Way to the Quarry". Walk up.
+3. El Gigante fight in the Quarry. After it, N leads to the church door.
+
+TEST NEXT (October 19 2026)
+1. Open the map with M: do you hear the place names, objective, typewriter, ways out?
+   Move around the map: are names read as they appear? Press M to close.
+2. In the game press Shift+O: the same summary.
+3. Climb a ladder: does it say "At the top of a ladder" / "At the bottom"?
+4. Press H at a ladder: does it say top or bottom?
+5. Quarry: Claude tests the side opening with the rock ledge before you play.
+
+WHAT TO TEST NOW (0.18.0, 17 October 2026)
+1. Items list: pick Crystal Marble, press Backslash. You should be walked downstairs to the closet's dial lock.
+2. Press F at the lock. It should say the rings. Turn them; it names crop, pig and baby when a ring is right. Then confirm.
+3. Take the Crystal Marble, go back up to the crystal ball (pick Puzzle Crystal Ball in Puzzles, Backslash), press F, use the marble.
+4. Turn the ball and listen for percent closer / further and "Lined up".
+5. Then the door opens: Handgun Ammo, Insignia Key, the Lever (lowers the attic ladder), then the attic herb and camera.
+Tell me which step went wrong; I read the log.
+
+NEW 0.17.1 (10/15) RIGHT THING FOR F:
+1. Load the save in the Chief's house. Go upstairs to the typewriter. Pick the Red Herb (Items, brackets) and press Backslash.
+2. Listen: "F ready: Red Herb" means press F. "F is on the Typewriter... Turning. Hold still" means wait, don't touch keys, until "F is on the Red Herb now".
+3. Tell Claude if F still opens the wrong thing.
+NEW 0.17.0 (10/14 night):
+1. Load the save in the Chief's house. Pick a place in another building, or one behind a locked door, and start the route. Listen for "Walking you round to another door".
+2. Next time you meet an emblem stand, you should hear "Emblem puzzle" and the turn/flip words.
+3. Tell Claude if a route says "Climb up here" on stairs or "Arrived" when you are not there.
+
+NEW 0.13.2 (10/14) MERCHANT:
+1. Press Equals (=): you should hear your pesetas and spinels.
+2. Talk to the Merchant: it says your money. Arrow through items: each says its price and if you can afford it.
+3. Tell Claude if a price is missing or wrong, or if the Sell or Trade tab sounds wrong.
+4. Press N: it should say "Next: Valley entrance". Hold W. At the entrance press N again: "Hexagonal Emblem, on the roof". After you pick it up, N leads back to the crank stand.
+
+NEW 0.13.1 (10/14 11:45) FACTORY GATE:
+1. Pick the Merchant (Semicolon to People, brackets), Shift+Backslash, hold W. You should not hear 'Closed door' at the gate.
+2. Talk to the Merchant with F. Then pick Handgun Ammo again and Shift+Backslash. If the gate is open now the route goes through it.
+3. If it still says the gate won't open, tell Claude - Claude reads the log.
+
+NEW 0.13.0 (10/14) BUILDINGS - optional, for exploring on your own:
+1. Press Semicolon until "Buildings". Wait a few seconds after loading; it may say "Still mapping".
+2. Brackets go through the buildings: letter, distance, size, ways in, what is inside.
+3. Shift+Backslash walks you to the way in. Walk in: you should hear "Entered Building ..".
+4. Semicolon to "Inside this building": brackets list the items, doors and ways out in it.
+5. Walk out: "Left Building ..". Tell me: buildings missing, two houses joined as one, or outdoor spots called buildings.
+
+CHAPTER 2 GEAR ROOM (10/13):
+1. At the barred gate: tap A once (step left), press F at once, then hold W through it.
+2. Question mark, then Shift+Backslash: walks you to the wheel. Hold F until "fully turned".
+3. Sprint (Shift+W) following the route: corridor, hall, F at the window, F at the shutter to slide under.
+4. Inside: take your gear from the table (F), then unbar the gate from that side (F).
+
+NEW (10/13): QUESTION MARK KEY (Shift+Slash) = "What now?"
+- Press it whenever you are stuck. It tells you what blocks the way and the most useful thing nearby, and selects it.
+- Shift+Backslash walks to it. Press question mark again for the next idea.
+- Right now in the factory it should say: Crank, hold F to turn it.
+
+CHAPTER 2 START (10/13): the story takes ALL your gear away. This is normal.
+- Pick up the Kitchen Knife lying on the ground, about 18 meters away (comma key lists loot).
+- Then break the Green Herb crate: hold Space, press K, then F.
+- Your gear is in the central room of the Abandoned Factory (a crank opens the way).
+
+NEW 0.12.0: pick loot with Comma (listen for "inside a building"), Shift+Backslash for a route, press Period for "Straight N meters, then turn left". Route to loot in a house says meters to the door, then meters inside.
+
+TEST 0.10.0 (10/12, 2:40 PM) - fishing village fight. Start the game fresh (new speech plugin).
+
+WHY YOU KEPT DYING (from your 2:14 PM log):
+- Dynamite shots missed because the mod aimed at the tiny stick in his hand, 15 meters away,
+  and told you "Press K now" before the gun was ready. Now it aims at HIS CHEST.
+  Shooting him while he holds lit dynamite kills him and it blows up on him.
+- Twice the game paused itself right after the dynamite warning (the window lost focus).
+  The mod now writes down which window took over, so I can find out why.
+- Most damage came from villagers 1-2 meters away, grabs, and one bear trap.
+
+NEW:
+1. Dynamite: hold L. You hear "Aiming at the dynamite man... Wait for fire." Keep holding L.
+   When you hear "Fire!", press K.
+2. "Thrown! Run sideways now, hold Shift." = he threw it. Hold Shift and A or D for 2 seconds.
+3. "Lunge, left! Back off or slash." = a villager is rushing you (TEST: is it early enough?).
+4. N no longer walks you to the tripwire bomb shooting spot.
+
+TIPS TO STAY ALIVE (from a walkthrough):
+- The fight ENDS: the villagers don't keep coming forever. Two dynamite men: one behind a
+  fence in front of the boathouse, one up on a wall. Once the area is clear, you shoot the
+  padlock on the boathouse door. Inside are more shotgun shells and handgun ammo.
+- Back up to the tunnel/entrance so they come at you one at a time, from the front.
+- Flash Grenade: throw it when 3 or more are close; they are stunned, then knife them.
+- Grabbed: press Space at once.
+- Running past: NOT confirmed. The boathouse door is padlocked, so you need some quiet
+  time there. Claude can check the left-side run live with you.
+
+TEST 0.9.3: village fight - on "Dynamite!" hold L, press K right away. Does it blow up in his hands?
+
+TEST 0.9.2 (10/12):
+1. Walk toward a bear trap (village, Resources (S)): mod should turn you away and say so once.
+2. Village walk: much less talking? Enemy warnings only when close.
+3. Bird's nest route: does it get you there now?
+
+TEST 0.6.0 (10/12):
+1. Out of handgun ammo: Tab, pick W-870, Equip. Click empty -> hear ammo advice.
+2. Pick the Wooden Cog in Items, Shift+Backslash: route should say window/ladder steps.
+3. Comma: loot list (select only); Shift+Comma next. Period: next turn and its distance. Shift+Period: spoken directions on/off.
+4. Drawer: "Press F to open it, then F again to take it". Does F pick up now?
+
+RE4 Access - where we stopped (10/11/2026, 6:40 PM)
+
+THE GAME IS STILL RUNNING (paused). When you come back, press Escape ("Back in game").
+
+WHERE: Chapter 1, at the FARM. Objective: Head for the lake. Health about 54 percent.
+You are on the ground just south of the barn, next to a small shrine.
+FIRST press Escape (maybe twice): Leon was stuck in an item screen at the shrine.
+The Green Herb nearby is INSIDE the barn - you get it after the padlock is broken.
+
+THE PUZZLE (how to get to the lake):
+1. Shoot the padlock on the BARN door. 2 hits. Claude will walk you to a good spot
+   about 4 meters in front of it, then: hold L, press K, press K.
+2. Go into the barn, take the Wooden Cog from the table. Big enemies break in after that!
+3. Climb the windmill ladder, put the cog in the machine slot (F, choose the cog),
+   pull the lever (F). The way to the lake opens.
+
+NEXT SESSION: tell Claude "let's continue RE4" - Claude guides you live, step by step.
+
+Keys: N next, U health, O objective, J route status, Tab case, L aim (hold), K shoot,
+Space knife, F use/pick up, R reload, Escape pause.
+
+10/22: In the church press N. It should say "Next: Church lever". Walk there, press F. Then N again: "Stained glass stand". Press F, use the Blue Dial.
+
+10/22 stained glass: at the stand press F, use the Blue Dial. Turn a glass: listen for the degrees counting down and "lined up". Switch glass: the mod names it. N = all three.

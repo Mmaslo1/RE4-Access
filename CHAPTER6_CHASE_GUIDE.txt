@@ -1,0 +1,32 @@
+RE4 Access - Chapter 6 chase, "Flee from the villagers"  (updated 11/1/2026)
+Everything here is a key you press or words the mod says.
+
+WHAT IT IS
+This is a chase, not a boss fight. Chief Mendez is right behind you.
+If he grabs you, you die. Pressing Space did not save you in the
+2 grabs in your log, and neither did shooting.
+
+WHAT TO DO
+1. The mod says: "Run! Hold Shift and W."
+2. Hold Shift and W, and keep holding both. You do not need to press N.
+   The route starts by itself and the mod steers you.
+3. Do not press L or K.
+4. If the mod says "Grab coming! Keep running.": keep holding both keys.
+5. If the mod says "You stopped.": hold Shift and W again.
+6. If the mod says "Ashley is behind you": let go of W for a moment,
+   then hold Shift and W again.
+7. The chase is over when the mod says "New objective".
+   Then press N for the next step.
+
+HONEST NOTE
+The mod knows only the end of this chase, not the exact path, and the
+new steering has not been tried in the game yet. Your next run records
+the path so Claude can add it.
+
+THE BOSS AFTER IT (Mendez)
+1. Hold L: the mod aims at him. Press K again and again.
+2. When the mod says "F ready": press F.
+3. When the mod says "Close": hold S to back away, then aim again.
+4. Health low: press I to open the case. Heal there.
+
+Press O at any time to hear the chase tips again.

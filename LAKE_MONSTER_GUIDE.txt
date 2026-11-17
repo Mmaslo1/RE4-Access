@@ -1,0 +1,45 @@
+LAKE MONSTER BATTLE (end of Chapter 3) - how it works with RE4 Access
+Written 10/19 by Claude, after fighting it 3 times.
+
+WHAT THE BATTLE IS
+You sit in a small boat on the lake. A giant lake monster swims around you.
+The boat is tied to the monster with a rope, so it drags you along.
+You have NO gun in this fight. Leon throws harpoons (spears) by hand.
+That is why you never heard a gun shot: a harpoon throw is almost silent.
+Harpoons never run out.
+The monster has 2001 health. One harpoon that hits takes about 40 to 360 of it.
+It took about 70 throws to win. Many throws miss when it moves or dives.
+
+THE KEYS
+  Hold L   = raise a harpoon. The mod turns you toward the monster.
+  K        = throw (while you hold L).
+  W        = boat forward. A and D = steer left and right.
+
+WHAT THE MOD SAYS
+  "In the boat"            = the fight has started, your keys work.
+  "Fire, 24 meters"        = you are aimed at the monster. Press K now.
+  "Hit"                    = YOUR harpoon hit the monster. Good news.
+  "The monster is under water. Steer with W, A and D, and wait."
+                           = nothing to throw at. Keep holding L and wait
+                             until it comes up and the mod says Fire again.
+  "Enemy down"             = you won. A cutscene plays.
+
+THE SIMPLE WAY TO WIN
+  1. Hold L.
+  2. When you hear "Fire", press K once.
+  3. Let go of L for a moment, then hold L again.
+  4. Repeat. Over and over, for about 3 to 4 minutes.
+  This is exactly what Claude did on the winning try.
+
+HOW YOU CAN LOSE
+  Claude died twice, once with the monster at only 10 health left.
+  The monster's attacks hurt Leon badly, and the mod does not yet warn you
+  before it attacks. Claude does not know yet exactly what the killing attack
+  was. Next time it happens, Claude will look into it and add a warning.
+  If you die: choose Continue. You start on the shore next to the boat.
+  Press N, walk to the boat, press F to get in, and the fight starts again.
+  The monster's health is full again after a death.
+
+TIP
+  Leon had only 860 of 1260 health when the fight started. Heal before you
+  get in the boat (Tab, then a herb or First Aid Spray) so you can take more hits.
