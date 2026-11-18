@@ -133,10 +133,12 @@ local last_subn, last_logged_sub = 0, nil
 local function scene_started(s)
     S = { key = s.key, max = s.max, next = 1, start = os.clock() }
     local d = A.data[s.key]
+    pcall(fs.write, "REAccess_scene_now.txt", "1 " .. tostring(s.key))   -- 11/14: picture helper reads this at once (record file is flushed late)
     rec_line(string.format("SCENE START %s max %.0f status %s players %d%s", s.key, s.max, s.status, s.count,
         d and (" (described: " .. (d.title ~= "" and d.title or "yes") .. ")") or " (no description yet)"))
 end
 local function scene_ended(why)
+    pcall(fs.write, "REAccess_scene_now.txt", "0")
     if S then rec_line(string.format("SCENE END %s (%s) after %.1f s", S.key, why, os.clock() - S.start)) end
     S = nil
     rec_flush()

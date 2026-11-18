@@ -1,4 +1,8 @@
-// REAccessSpeech - REFramework plugin that speaks text through NVDA or JAWS (SAPI fallback).
+// REAccessSpeech - REFramework plugin that speaks text through the player's screen reader.
+// 0.4.0 (2026-11-17): speech goes through Prism 0.18.2 (prism.dll next to the game exe,
+// https://github.com/ethindp/prism, MPL-2.0): NVDA, JAWS, Narrator, ZoomText and more,
+// Windows OneCore voice when no reader runs. If prism.dll is missing or fails, the old
+// built-in route is used (JAWS COM, NVDA controller client, SAPI).
 // Shared RE Engine core: the Lua side writes messages to
 //   <game>\reframework\data\REAccess_speech.txt
 // in this format (whole file rewritten each time):
@@ -18,6 +22,7 @@
 #include <fstream>
 #include <sstream>
 #include <atomic>
+#include "prism.h"
 
 static std::wstring g_gameDir;
 static std::wstring g_speechFile;
@@ -134,7 +139,10 @@ static bool NvdaSay(const std::wstring& text, bool interrupt) {
     return g_nvdaSpeak(text.c_str()) == 0;
 }
 
-static void Speak(const std::string& utf8, bool interrupt) {
+static bool g_comInit = false;
+
+static void OldSpeak(const std::string& utf8, bool interrupt) {
+    if (!g_comInit) { CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED); g_comInit = true; }
     std::wstring w = Utf8ToWide(utf8);
     // NVDA first when it runs without JAWS. JAWS can stay installed and still answer
     // its API, so an installed JAWS must not take speech away from a running NVDA.
@@ -143,6 +151,72 @@ static void Speak(const std::string& utf8, bool interrupt) {
     if (NvdaSay(w, interrupt)) { Log("NVDA: " + utf8); return; }
     if (SapiSay(w, interrupt)) { Log("SAPI: " + utf8); return; }
     Log("NO SPEECH: " + utf8);
+}
+
+// ---------------- Prism (0.4.0) ----------------
+// Loaded by full path from the game folder (not reframework\plugins: REFramework would
+// treat it as a plugin). Only the worker thread touches Prism.
+static decltype(&prism_init) p_init = nullptr;
+static decltype(&prism_registry_create_best) p_create_best = nullptr;
+static decltype(&prism_backend_name) p_name = nullptr;
+static decltype(&prism_backend_speak) p_speak = nullptr;
+static decltype(&prism_backend_free) p_free = nullptr;
+static decltype(&prism_error_string) p_errstr = nullptr;
+static decltype(&prism_version_string) p_version = nullptr;
+static PrismContext* g_prism = nullptr;
+static PrismBackend* g_backend = nullptr;
+static std::string g_backendName;
+static DWORD g_lastCreate = 0;
+
+static bool PrismLoad() {
+    HMODULE m = LoadLibraryW((g_gameDir + L"\\prism.dll").c_str());
+    if (!m) { Log("prism.dll not found next to the game exe - using the old speech route"); return false; }
+    p_init = (decltype(p_init))GetProcAddress(m, "prism_init");
+    p_create_best = (decltype(p_create_best))GetProcAddress(m, "prism_registry_create_best");
+    p_name = (decltype(p_name))GetProcAddress(m, "prism_backend_name");
+    p_speak = (decltype(p_speak))GetProcAddress(m, "prism_backend_speak");
+    p_free = (decltype(p_free))GetProcAddress(m, "prism_backend_free");
+    p_errstr = (decltype(p_errstr))GetProcAddress(m, "prism_error_string");
+    p_version = (decltype(p_version))GetProcAddress(m, "prism_version_string");
+    if (!(p_init && p_create_best && p_name && p_speak && p_free && p_errstr && p_version)) {
+        Log("prism.dll is missing functions - using the old speech route");
+        return false;
+    }
+    g_prism = p_init(nullptr);
+    if (!g_prism) { Log("prism_init failed - using the old speech route"); return false; }
+    Log(std::string("Prism ") + p_version() + " loaded");
+    return true;
+}
+
+static void PrismCreate() {
+    if (g_backend) { p_free(g_backend); g_backend = nullptr; }
+    g_lastCreate = GetTickCount();
+    g_backend = p_create_best(g_prism);
+    std::string name = g_backend ? p_name(g_backend) : "(none)";
+    if (name != g_backendName) Log("Prism speech: " + name);
+    g_backendName = name;
+}
+
+// True when Prism found no screen reader, only a plain Windows voice.
+static bool PrismOnPlainVoice() {
+    return g_backendName == "(none)" || g_backendName.find("OneCore") != std::string::npos
+        || g_backendName.find("SAPI") != std::string::npos || g_backendName.find("UIA") != std::string::npos
+        || g_backendName.find("Automation") != std::string::npos;
+}
+
+static void Speak(const std::string& utf8, bool interrupt) {
+    if (!g_prism) { OldSpeak(utf8, interrupt); return; }
+    // A screen reader started after the game: look again every 10 s while on a plain voice.
+    if (!g_backend || (PrismOnPlainVoice() && GetTickCount() - g_lastCreate > 10000)) PrismCreate();
+    if (!g_backend) { OldSpeak(utf8, interrupt); return; }
+    PrismError e = p_speak(g_backend, utf8.c_str(), interrupt);
+    if (e == PRISM_OK) { Log(g_backendName + ": " + utf8); return; }
+    // The reader may have restarted (Prism keeps a dead connection): reconnect, try once more.
+    Log(g_backendName + " ERROR " + p_errstr(e) + ": " + utf8);
+    if (e == PRISM_ERROR_INVALID_UTF8) return;
+    PrismCreate();
+    if (g_backend && p_speak(g_backend, utf8.c_str(), interrupt) == PRISM_OK) { Log(g_backendName + " (retry): " + utf8); return; }
+    OldSpeak(utf8, interrupt);
 }
 
 // ---------------- file channel ----------------
@@ -200,8 +274,8 @@ static std::string WindowInfo(HWND w) {
 }
 
 static DWORD WINAPI Worker(LPVOID) {
-    CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
     Log("REAccessSpeech worker started");
+    if (PrismLoad()) PrismCreate();
 
     std::string lastSession;
     long long lastId = 0;
@@ -265,7 +339,7 @@ static void Start() {
     // keep the previous run's log (10/12: an earlier fight's log was lost on restart)
     MoveFileExW(g_logFile.c_str(), (g_gameDir + L"\\REAccess_speech_log_prev.txt").c_str(), MOVEFILE_REPLACE_EXISTING);
     { std::ofstream f(g_logFile, std::ios::trunc); }
-    Log("REAccessSpeech 0.3.0 loaded");
+    Log("REAccessSpeech 0.4.0 loaded");
     HANDLE h = CreateThread(nullptr, 0, Worker, nullptr, 0, nullptr);
     if (h) CloseHandle(h);
 }

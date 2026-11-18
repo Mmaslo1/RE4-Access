@@ -1,10 +1,12 @@
 RE4 ACCESS 0.25.4 - blind accessibility mod for Resident Evil 4 (2023 remake), Steam PC version.
-Speaks through JAWS. Without JAWS it uses the Windows voice (SAPI).
+Speaks through your screen reader (NVDA, JAWS, Narrator and others) using Prism.
+With no screen reader running it uses the Windows voice.
 
 INSTALL
 1. Find the game folder: in Steam, right-click Resident Evil 4, Manage, Browse local files.
    Usually: C:\Program Files (x86)\Steam\steamapps\common\RESIDENT EVIL 4  BIOHAZARD RE4
-2. Copy EVERYTHING in this folder (dinput8.dll and the reframework folder) into the game folder.
+2. Copy EVERYTHING in this folder (dinput8.dll, prism.dll, the reframework and third-party folders)
+   into the game folder.
    Say yes if Windows asks to merge folders.
    dinput8.dll is REFramework (the free mod loader, github.com/praydog/REFramework),
    the build this mod was tested with.
