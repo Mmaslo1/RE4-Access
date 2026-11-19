@@ -1,0 +1,24 @@
+RE4 ACCESS IS INSTALLED.
+
+WHAT TO DO NOW:
+1. Start your screen reader (JAWS, NVDA or Narrator).
+2. Start Resident Evil 4 from Steam as usual. The first start can take longer.
+3. After a few seconds you should hear "RE4 Access loaded".
+
+FIRST TIME ONLY - SET TWO GAME KEYS:
+In the game open Options, Controls, Key Bindings (the mod reads this screen).
+Set "Ready Weapon / Aim" to L and "Attack / Fire" to K.
+
+MOST USED KEYS:
+N = next step (hold W to walk there). O = objective. H = where am I.
+Y = repeat. L = aim, K = fire. F = interact or kick. Tab = case. M = map.
+F1 = all mod settings.
+
+All keys and the game guides are in the folder RE4Access_docs inside the game
+folder. The file README_KEYS_AND_HELP.txt can open for you when you press Finish.
+
+TO REMOVE THE MOD: Windows Settings, Apps, Installed apps, "RE4 Access",
+Uninstall.
+
+IF THERE IS NO SPEECH: send the file REAccess_speech_log.txt from the game
+folder to the person who gave you this mod.
