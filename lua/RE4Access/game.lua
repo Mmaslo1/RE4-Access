@@ -3702,7 +3702,7 @@ local function pick_aim_target(pos)
     if selected and selected.shoot then
         local sp = selected.shoot
         local d = math.sqrt((sp.x - pos.x) ^ 2 + (sp.z - pos.z) ^ 2)
-        if d < 15 then
+        if d < (sp.range or 15) then   -- 11/21 Ch10 low counterweight: 20 m
             return { name = sp.label or sp.what == "stick" and "Stick" or sp.what == "lantern" and "Lantern" or "Bird's nest", pos = { x = sp.x, y = sp.y, z = sp.z }, dist = d, key = selected.key, fixed = true, go = selected.go }
         end
     end

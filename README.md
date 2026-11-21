@@ -4,7 +4,7 @@ A blind accessibility mod for **Resident Evil 4 (2023 remake)**, Steam PC versio
 Made by a totally blind player, built with Claude Code.
 
 ## How to install (the easy way)
-1. Download the installer: [RE4Access_Setup_0.27.0.exe](https://github.com/Mmaslo1/RE4-Access/releases/latest/download/RE4Access_Setup_0.27.0.exe).
+1. Download the installer: [RE4Access_Setup_0.28.0.exe](https://github.com/Mmaslo1/RE4-Access/releases/latest/download/RE4Access_Setup_0.28.0.exe).
    If your browser asks whether to keep the file, choose Keep.
 2. Close the game if it is running. Press Enter on the downloaded file.
 3. If Windows says "Windows protected your PC": press Tab to "More info", Enter, then Tab to "Run anyway", Enter.
@@ -16,7 +16,7 @@ Made by a totally blind player, built with Claude Code.
 
 To remove the mod: Windows Settings, Apps, Installed apps, "RE4 Access", Uninstall.
 
-Prefer copying files by hand? Download [RE4Access_Share_0.27.0.zip](https://github.com/Mmaslo1/RE4-Access/releases/latest/download/RE4Access_Share_0.27.0.zip)
+Prefer copying files by hand? Download [RE4Access_Share_0.28.0.zip](https://github.com/Mmaslo1/RE4-Access/releases/latest/download/RE4Access_Share_0.28.0.zip)
 and follow the file "01 START HERE - HOW TO INSTALL.txt" inside it.
 All downloads: the [Releases page](https://github.com/Mmaslo1/RE4-Access/releases).
 

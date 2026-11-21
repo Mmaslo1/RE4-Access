@@ -1,5 +1,8 @@
 Resident Evil 4 Remake - Chapter 10 guide (Leon)
-Written by Claude, 11/14. From walkthroughs (TheGamer, Push Square, PowerPyx). Not tested in the game yet.
+Written by Claude, 11/14. UPDATE 11/21: Claude PLAYED all of Chapter 10 and N now has an exact step for every place
+(new file lua/RE4Access/ch10.lua). Just press N each time. Enemy tips: Downloads\RE4R_Chapter10_Enemy_Tips.txt.
+Two things learned in the game: the LOW counterweight is only visible from the SOUTH balcony (N takes you there),
+and in the dark caves after the fall there is no map data, so N says the direction and you press N again.
 In the game: press N. Where N has no exact spot yet, it reads this guide for your objective.
 
 PART 1: Objective "Head for the throne room"

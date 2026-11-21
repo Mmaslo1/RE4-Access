@@ -145,3 +145,5 @@ Space knife, F use/pick up, R reload, Escape pause.
 10/22: In the church press N. It should say "Next: Church lever". Walk there, press F. Then N again: "Stained glass stand". Press F, use the Blue Dial.
 
 10/22 stained glass: at the stand press F, use the Blue Dial. Turn a glass: listen for the degrees counting down and "lined up". Switch glass: the mod names it. N = all three.
+
+11/21 CHAPTER 10: press N at every step. Tested by Claude with N: start to the antechamber gate. NOT yet tested with N: Unicorn statues, the depths (cave), the lab. Tell Claude where N is wrong.
