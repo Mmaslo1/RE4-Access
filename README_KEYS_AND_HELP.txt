@@ -1,3 +1,13 @@
+UPDATES (new in 0.29.0)
+When the game starts, the mod checks for a newer RE4 Access on the internet.
+If there is one, it says "Update available ... Press Shift+F1 to download it."
+Shift+F1    Download the update while you play. It installs by itself after you
+            close the game. Windows asks for permission once: press Alt+Y.
+            A Windows voice tells you when it is installed.
+            With no update, Shift+F1 says you have the newest version.
+Nothing is downloaded unless you press Shift+F1. To turn the check off,
+create an empty file called REAccess_update_off.txt in reframework\data.
+
 EXPLORE MODE AND SIDE QUESTS (new 11/11/2026)
 F9          Explore mode on or off (remembered). For finding the way yourself:
             N then only says the goal, how far and which way. No walking help

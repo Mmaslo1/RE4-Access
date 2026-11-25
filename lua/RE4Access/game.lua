@@ -8245,7 +8245,7 @@ function G.on_frame()
             was_down = {}
             return
         end
-        if pressed(VK.F1) then G.settings_help() end
+        if pressed(VK.F1) then if shift and RE4Access.update then RE4Access.update.key() else G.settings_help() end end
         if pressed(VK.F2) then G.toggle_combat_quiet() end
         if pressed(VK.F3) then G.toggle_walk_reports() end
         if pressed(VK.F4) then toggle_short() end

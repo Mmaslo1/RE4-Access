@@ -1,4 +1,6 @@
 // REAccessSpeech - REFramework plugin that speaks text through the player's screen reader.
+// 0.5.0 (2026-11-25): update check - asks GitHub for a newer RE4 Access, downloads it
+// on Shift+F1 and installs it after the game closes (see "updater" below).
 // 0.4.0 (2026-11-17): speech goes through Prism 0.18.2 (prism.dll next to the game exe,
 // https://github.com/ethindp/prism, MPL-2.0): NVDA, JAWS, Narrator, ZoomText and more,
 // Windows OneCore voice when no reader runs. If prism.dll is missing or fails, the old
@@ -22,6 +24,7 @@
 #include <fstream>
 #include <sstream>
 #include <atomic>
+#include <winhttp.h>
 #include "prism.h"
 
 static std::wstring g_gameDir;
@@ -219,6 +222,189 @@ static void Speak(const std::string& utf8, bool interrupt) {
     OldSpeak(utf8, interrupt);
 }
 
+// ---------------- updater (0.5.0) ----------------
+// On game start: ask GitHub for the newest RE4 Access release. The Lua side
+// (RE4Access\update.lua) reads reframework\data\REAccess_update.txt:
+//   checking | off | error\t<have> | current\t<have> | available\t<new>\t<have>
+//   downloading\t<new> | failed\t<new> | ready\t<new>
+// Nothing is downloaded until the player presses Shift+F1 (Lua writes
+// REAccess_update_go.txt). The installer runs after the game closes.
+// No update check at all: create reframework\data\REAccess_update_off.txt.
+static const wchar_t* kReleaseApi = L"https://api.github.com/repos/Mmaslo1/RE4-Access/releases/latest";
+static std::wstring g_dataDir;
+
+static void WriteStatus(const std::string& s) {
+    std::wstring path = g_dataDir + L"\\REAccess_update.txt";
+    std::wstring tmp = path + L".tmp";
+    { std::ofstream f(tmp, std::ios::binary | std::ios::trunc); f << s << "\n"; }
+    MoveFileExW(tmp.c_str(), path.c_str(), MOVEFILE_REPLACE_EXISTING);
+    Log("Update status: " + s);
+}
+
+// GET url; the body goes to `body` or, when saveTo is given, into that file.
+static bool HttpGet(const std::wstring& url, std::string* body, const std::wstring& saveTo, std::string& err) {
+    URL_COMPONENTS uc{}; uc.dwStructSize = sizeof(uc);
+    wchar_t host[256] = L"", path[2048] = L"";
+    uc.lpszHostName = host; uc.dwHostNameLength = 256;
+    uc.lpszUrlPath = path; uc.dwUrlPathLength = 2048;
+    wchar_t extra[2048] = L""; uc.lpszExtraInfo = extra; uc.dwExtraInfoLength = 2048;
+    if (!WinHttpCrackUrl(url.c_str(), 0, 0, &uc)) { err = "bad url"; return false; }
+    std::wstring full = std::wstring(path) + extra;
+    HINTERNET s = WinHttpOpen(L"RE4Access-updater", WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY, nullptr, nullptr, 0);
+    if (!s) s = WinHttpOpen(L"RE4Access-updater", WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, nullptr, nullptr, 0);
+    if (!s) { err = "WinHttpOpen failed"; return false; }
+    WinHttpSetTimeouts(s, 15000, 15000, 20000, 60000);
+    bool ok = false;
+    HINTERNET c = WinHttpConnect(s, host, uc.nPort, 0);
+    HINTERNET r = nullptr;
+    if (c) {
+        r = WinHttpOpenRequest(c, L"GET", full.c_str(), nullptr, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES,
+                               uc.nScheme == INTERNET_SCHEME_HTTPS ? WINHTTP_FLAG_SECURE : 0);
+    }
+    if (r && WinHttpSendRequest(r, L"Accept: application/vnd.github+json\r\n", (DWORD)-1, nullptr, 0, 0, 0)
+          && WinHttpReceiveResponse(r, nullptr)) {
+        DWORD code = 0, sz = sizeof(code);
+        WinHttpQueryHeaders(r, WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER, nullptr, &code, &sz, nullptr);
+        if (code != 200) err = "HTTP " + std::to_string(code);
+        else {
+            std::ofstream file;
+            if (!saveTo.empty()) file.open(saveTo, std::ios::binary | std::ios::trunc);
+            ok = saveTo.empty() || file.is_open();
+            if (!ok) err = "cannot write file";
+            for (DWORD avail = 0; ok && WinHttpQueryDataAvailable(r, &avail) && avail > 0; ) {
+                std::string buf(avail, '\0'); DWORD got = 0;
+                if (!WinHttpReadData(r, &buf[0], avail, &got)) { ok = false; err = "read failed"; break; }
+                buf.resize(got);
+                if (file.is_open()) file << buf; else if (body) *body += buf;
+            }
+        }
+    } else if (err.empty()) err = "no connection (error " + std::to_string(GetLastError()) + ")";
+    if (r) WinHttpCloseHandle(r);
+    if (c) WinHttpCloseHandle(c);
+    WinHttpCloseHandle(s);
+    return ok;
+}
+
+// Value of "key": "value" (first match) in a JSON text. Enough for GitHub's release reply.
+static std::string JsonString(const std::string& json, const std::string& key, size_t from = 0) {
+    size_t k = json.find("\"" + key + "\"", from);
+    if (k == std::string::npos) return "";
+    size_t q1 = json.find('"', json.find(':', k) + 1);
+    size_t q2 = json.find('"', q1 + 1);
+    return (q1 == std::string::npos || q2 == std::string::npos) ? "" : json.substr(q1 + 1, q2 - q1 - 1);
+}
+
+static std::vector<int> VersionParts(std::string v) {
+    if (!v.empty() && (v[0] == 'v' || v[0] == 'V')) v = v.substr(1);
+    std::vector<int> p; std::stringstream ss(v); std::string x;
+    while (std::getline(ss, x, '.')) p.push_back(atoi(x.c_str()));
+    return p;
+}
+static bool IsNewer(const std::string& a, const std::string& b) {   // a > b ?
+    auto pa = VersionParts(a), pb = VersionParts(b);
+    for (size_t i = 0; i < pa.size() || i < pb.size(); i++) {
+        int x = i < pa.size() ? pa[i] : 0, y = i < pb.size() ? pb[i] : 0;
+        if (x != y) return x > y;
+    }
+    return false;
+}
+
+static std::string LocalVersion() {
+    std::ifstream f(g_gameDir + L"\\reframework\\autorun\\RE4Access.lua");
+    std::string line;
+    while (std::getline(f, line)) {
+        size_t p = line.find("VERSION = \"");
+        if (p != std::string::npos) { p += 11; return line.substr(p, line.find('"', p) - p); }
+    }
+    return "";
+}
+
+static std::string Narrow(const std::wstring& w) {
+    int n = WideCharToMultiByte(CP_UTF8, 0, w.c_str(), -1, nullptr, 0, nullptr, nullptr);
+    std::string s(n > 0 ? n - 1 : 0, '\0');
+    if (n > 1) WideCharToMultiByte(CP_UTF8, 0, w.c_str(), -1, &s[0], n, nullptr, nullptr);
+    return s;
+}
+
+// A hidden PowerShell waits for the game to close, then runs the installer
+// silently (Windows asks for permission once) and speaks the result.
+static bool StartInstallWhenGameCloses(const std::wstring& setup, const std::string& ver) {
+    auto q = [](std::wstring s) { std::wstring o; for (wchar_t ch : s) { o += ch; if (ch == L'\'') o += L'\''; } return o; };
+    std::wstring dir = setup.substr(0, setup.find_last_of(L"\\"));
+    std::wstring ps1 = dir + L"\\install_when_game_closes.ps1";
+    std::wstring wver = Utf8ToWide(ver);
+    std::wstring script =
+        L"$ErrorActionPreference = 'SilentlyContinue'\r\n"
+        L"Wait-Process -Id " + std::to_wstring(GetCurrentProcessId()) + L"\r\n"
+        L"Start-Sleep -Seconds 3\r\n"
+        L"Add-Type -AssemblyName System.Speech\r\n"
+        L"$v = New-Object System.Speech.Synthesis.SpeechSynthesizer\r\n"
+        L"$v.Speak('Installing the RE4 Access update, version " + wver + L". Windows will ask for permission. Press Alt plus Y.')\r\n"
+        L"$p = Start-Process -FilePath '" + q(setup) + L"' -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/DIR=\"" + q(g_gameDir) + L"\"' -Verb RunAs -Wait -PassThru\r\n"
+        L"if ($p -and $p.ExitCode -eq 0) { $v.Speak('RE4 Access update installed. Start the game when you are ready.') }\r\n"
+        L"else { $v.Speak('The RE4 Access update was not installed. You can install it later from the RE4 Access page on GitHub.') }\r\n";
+    {
+        std::ofstream f(ps1, std::ios::binary | std::ios::trunc);
+        f << "\xEF\xBB\xBF" << Narrow(script);   // BOM so Windows PowerShell reads UTF-8
+    }
+    std::wstring cmd = L"powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File \"" + ps1 + L"\"";
+    STARTUPINFOW si{}; si.cb = sizeof(si); si.dwFlags = STARTF_USESHOWWINDOW; si.wShowWindow = SW_HIDE;
+    PROCESS_INFORMATION pi{};
+    DWORD flags = CREATE_NO_WINDOW | CREATE_BREAKAWAY_FROM_JOB;
+    BOOL ok = CreateProcessW(nullptr, &cmd[0], nullptr, nullptr, FALSE, flags, nullptr, dir.c_str(), &si, &pi);
+    if (!ok) ok = CreateProcessW(nullptr, &cmd[0], nullptr, nullptr, FALSE, CREATE_NO_WINDOW, nullptr, dir.c_str(), &si, &pi);
+    if (ok) { CloseHandle(pi.hThread); CloseHandle(pi.hProcess); Log("Installer waits for the game to close"); }
+    else Log("Could not start the install helper, error " + std::to_string(GetLastError()));
+    return ok != FALSE;
+}
+
+static DWORD WINAPI UpdateWorker(LPVOID) {
+    std::wstring goFile = g_dataDir + L"\\REAccess_update_go.txt";
+    DeleteFileW(goFile.c_str());
+    if (GetFileAttributesW((g_dataDir + L"\\REAccess_update_off.txt").c_str()) != INVALID_FILE_ATTRIBUTES) {
+        WriteStatus("off"); return 0;
+    }
+    WriteStatus("checking");
+    Sleep(3000);
+    std::string have = LocalVersion();
+    std::string json, err;
+    if (!HttpGet(kReleaseApi, &json, L"", err)) { Log("Update check failed: " + err); WriteStatus("error\t" + have); return 0; }
+    std::string tag = JsonString(json, "tag_name");
+    std::string ver = (!tag.empty() && (tag[0] == 'v' || tag[0] == 'V')) ? tag.substr(1) : tag;
+    std::string url;
+    for (size_t p = 0; (p = json.find("\"browser_download_url\"", p)) != std::string::npos; p++) {
+        std::string u = JsonString(json, "browser_download_url", p);
+        if (u.find("RE4Access_Setup_") != std::string::npos && u.size() > 4 && u.substr(u.size() - 4) == ".exe") { url = u; break; }
+    }
+    Log("Newest release " + ver + ", installed " + have + (url.empty() ? ", no installer in it" : ""));
+    if (ver.empty() || url.empty() || have.empty() || !IsNewer(ver, have)) { WriteStatus("current\t" + have); return 0; }
+    WriteStatus("available\t" + ver + "\t" + have);
+
+    for (;;) {
+        Sleep(500);
+        if (GetFileAttributesW(goFile.c_str()) == INVALID_FILE_ATTRIBUTES) continue;
+        DeleteFileW(goFile.c_str());
+        WriteStatus("downloading\t" + ver);
+        wchar_t tmp[MAX_PATH]; GetTempPathW(MAX_PATH, tmp);
+        std::wstring dir = std::wstring(tmp) + L"RE4Access_update";
+        CreateDirectoryW(dir.c_str(), nullptr);
+        std::wstring setup = dir + L"\\RE4Access_Setup_" + Utf8ToWide(ver) + L".exe";
+        err.clear();
+        bool ok = HttpGet(Utf8ToWide(url), nullptr, setup, err);
+        if (ok) {   // must be a real program of sensible size
+            std::ifstream f(setup, std::ios::binary | std::ios::ate);
+            long long size = f ? (long long)f.tellg() : 0;
+            char mz[2] = {}; f.seekg(0); f.read(mz, 2);
+            if (size < 500000 || mz[0] != 'M' || mz[1] != 'Z') { ok = false; err = "download incomplete (" + std::to_string(size) + " bytes)"; }
+        }
+        if (!ok) { Log("Update download failed: " + err); WriteStatus("failed\t" + ver); continue; }
+        Log("Update downloaded: " + Narrow(setup));
+        if (!StartInstallWhenGameCloses(setup, ver)) { WriteStatus("failed\t" + ver); continue; }
+        WriteStatus("ready\t" + ver);
+        return 0;
+    }
+}
+
 // ---------------- file channel ----------------
 
 struct Message { long long id; bool interrupt; std::string text; };
@@ -339,8 +525,11 @@ static void Start() {
     // keep the previous run's log (10/12: an earlier fight's log was lost on restart)
     MoveFileExW(g_logFile.c_str(), (g_gameDir + L"\\REAccess_speech_log_prev.txt").c_str(), MOVEFILE_REPLACE_EXISTING);
     { std::ofstream f(g_logFile, std::ios::trunc); }
-    Log("REAccessSpeech 0.4.0 loaded");
+    Log("REAccessSpeech 0.5.0 loaded");
+    g_dataDir = g_gameDir + L"\\reframework\\data";
     HANDLE h = CreateThread(nullptr, 0, Worker, nullptr, 0, nullptr);
+    if (h) CloseHandle(h);
+    h = CreateThread(nullptr, 0, UpdateWorker, nullptr, 0, nullptr);
     if (h) CloseHandle(h);
 }
 

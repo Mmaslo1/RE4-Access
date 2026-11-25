@@ -1,7 +1,7 @@
 -- RE4 Access - blind accessibility mod for Resident Evil 4 (2023)
 -- Speech goes through the REAccessSpeech plugin (reframework\plugins\REAccessSpeech.dll).
 
-local VERSION = "0.28.0"
+local VERSION = "0.29.0"
 local SPEECH_FILE = "REAccess_speech.txt"   -- inside reframework\data
 local KEEP = 30                              -- recent messages kept in the file
 
@@ -96,7 +96,7 @@ do
     if ok then RE4Access.lang = lang else log.info("[RE4Access] language files off: " .. tostring(lang)) end
 end
 
-for _, mod in ipairs({ "RE4Access.menu", "RE4Access.game", "RE4Access.route", "RE4Access.places", "RE4Access.hex", "RE4Access.dial", "RE4Access.crystal", "RE4Access.money", "RE4Access.guide", "RE4Access.endscreen", "RE4Access.mapread", "RE4Access.stained", "RE4Access.ashley", "RE4Access.siege", "RE4Access.flee", "RE4Access.files", "RE4Access.explore", "RE4Access.describe", "RE4Access.ch10" }) do
+for _, mod in ipairs({ "RE4Access.menu", "RE4Access.game", "RE4Access.route", "RE4Access.places", "RE4Access.hex", "RE4Access.dial", "RE4Access.crystal", "RE4Access.money", "RE4Access.guide", "RE4Access.endscreen", "RE4Access.mapread", "RE4Access.stained", "RE4Access.ashley", "RE4Access.siege", "RE4Access.flee", "RE4Access.files", "RE4Access.explore", "RE4Access.describe", "RE4Access.ch10", "RE4Access.update" }) do
     local ok, err = pcall(require, mod)
     if not ok then log.info("[RE4Access] " .. mod .. " failed: " .. tostring(err)) end
 end
