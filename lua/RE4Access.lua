@@ -1,7 +1,7 @@
 -- RE4 Access - blind accessibility mod for Resident Evil 4 (2023)
 -- Speech goes through the REAccessSpeech plugin (reframework\plugins\REAccessSpeech.dll).
 
-local VERSION = "0.29.0"
+local VERSION = "0.29.1"
 local SPEECH_FILE = "REAccess_speech.txt"   -- inside reframework\data
 local KEEP = 30                              -- recent messages kept in the file
 

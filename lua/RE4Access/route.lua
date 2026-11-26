@@ -76,6 +76,17 @@ local function cast_once(ax, ay, az, bx, by, bz, cfg)
     return cp:get_field("Position"), cp:get_field("Distance")
 end
 
+-- Name of the thing the last ray hit (11/26: the "branch" in front of the Ch10
+-- ballroom Ruby nest was an invisible Novistador flight zone, "..._ch1d3z0Area").
+function R.last_hit_name()
+    local name
+    pcall(function()
+        if result:call("get_NumContactPoints") == 0 then return end
+        name = result:call("getContactCollidable(System.UInt32)", 0):call("get_GameObject"):call("get_Name")
+    end)
+    return name
+end
+
 -- Returns hit position, hit distance (nil when nothing was hit).
 -- The query objects can go stale (freed by the game); then they are rebuilt.
 function R.cast(ax, ay, az, bx, by, bz, cfg)
@@ -571,7 +582,9 @@ local function follow(pos, now)
             R.pending_target, R.pending_door = nil, nil
             return
         elseif not RE4Access.game.sneak_on then   -- 11/9 sneak: silent waypoints
-            say("Arrived at " .. name)
+            local ex = ""
+            pcall(function() ex = RE4Access.game.arrive_extra(name) or "" end)
+            say("Arrived at " .. name .. ex)
         end
         if RE4Access.game.on_arrived then RE4Access.game.on_arrived() end
         return
@@ -835,6 +848,86 @@ local nav_body
 -- 11/14: in Ashley's part (Ch9 "Rescue Leon") Leon's body ch0a0z0_body is gone and the player
 -- is Ashley (ch0a1z0_body, own NavigationSurface): every route failed and N sent her along
 -- Leon's trail. The walking map now comes from whoever the player is.
+-- 11/26 (Ch10, corridor past the door to the ballroom): the navmesh path cut the
+-- door-frame corner - the first leg from Leon ran 0.6 m into the wall, "Blocked,
+-- finding another way" twice, and the new route cut the same corner. Check each
+-- flat leg with rays; when one hits a wall, put in a nearby point that has a clear
+-- line from the leg's start and to a later route point (skipping the cut points).
+-- Legs that climb or drop (stairs, ladders) are left alone.
+-- floor under the whole line (no shortcut over a hole or a balcony edge)
+local function floor_along(a, b)
+    local n = math.max(1, math.ceil(dist2d(a, b) / 0.5))
+    for k = 1, n - 1 do
+        local t = k / n
+        local gy = ground(a.x + (b.x - a.x) * t, a.y, a.z + (b.z - a.z) * t)
+        if not gy or math.abs(gy - (a.y + ((b.y or a.y) - a.y) * t)) > 0.35 then return false end
+    end
+    return true
+end
+
+-- room for Leon's body (0.5 m) all round a new point
+local function roomy(x, y, z)
+    for k = 0, 7 do
+        local ang = k * math.pi / 4
+        if R.cast(x, y + KNEE, z, x + math.cos(ang) * 0.5, y + KNEE, z + math.sin(ang) * 0.5) ~= nil then return false end
+    end
+    return true
+end
+
+function R.fix_corners(pts, max_fix)
+    if not pts or #pts < 2 then return pts end
+    local out, fixes, i = { pts[1] }, 0, 1
+    while i < #pts do
+        local a, b = pts[i], pts[i + 1]
+        local flat = math.abs((a.y or 0) - (b.y or 0)) < 0.15
+        if fixes < (max_fix or 4) and flat and wall_between(a.x, a.y, a.z, b.x, b.y, b.z) then
+            local best, bj, bc
+            -- farthest reachable later point first: the points next to the cut corner
+            -- hug the wall (first try went back to a point 0.2 m from the corner)
+            for j = math.min(#pts, i + 5), i + 1, -1 do
+                local t = pts[j]
+                -- never skip a marked point (crouch, bear trap, link)
+                local marked = false
+                for m = i + 1, j - 1 do local q = pts[m] if q.crouch or q.trap or q.kind or q.action then marked = true end end
+                if not marked and math.abs((t.y or a.y) - a.y) < 0.3 then
+                    for _, r in ipairs({ 0.6, 1.0, 1.5, 2.0 }) do
+                        for k = 0, 15 do
+                            local ang = k * math.pi / 8
+                            local cx, cz = a.x + math.cos(ang) * r, a.z + math.sin(ang) * r
+                            local gy = ground(cx, a.y, cz)
+                            if gy and math.abs(gy - a.y) < 0.3 then
+                                local cost = r + dist2d({ x = cx, z = cz }, t)
+                                if (not bc or cost < bc) and not wall_between(a.x, a.y, a.z, cx, gy, cz)
+                                    and not wall_between(cx, gy, cz, t.x, t.y, t.z)
+                                    and floor_along({ x = cx, y = gy, z = cz }, t) and roomy(cx, gy, cz) then
+                                    best, bj, bc = { x = cx, y = gy, z = cz }, j, cost
+                                end
+                            end
+                        end
+                        if best then break end
+                    end
+                    if best then break end
+                end
+            end
+            if best then
+                fixes = fixes + 1
+                out[#out + 1] = best
+                log.info(string.format("[RE4Access] corner fix: leg (%.1f,%.1f)->(%.1f,%.1f) hits a wall, via (%.1f,%.1f) to point %d",
+                    a.x, a.z, b.x, b.z, best.x, best.z, bj))
+                out[#out + 1] = pts[bj]
+                i = bj
+            else
+                out[#out + 1] = b
+                i = i + 1
+            end
+        else
+            out[#out + 1] = b
+            i = i + 1
+        end
+    end
+    return out
+end
+
 function R.dezigzag(pts)
     if not pts or #pts < 4 then return pts end
     local changed, guard = true, 0
@@ -1754,6 +1847,7 @@ function nav_route(from, goal, name, quiet)
     if link then
         local lasers
         head, lasers = avoid_traps(head)
+        do local okf, fp = pcall(R.fix_corners, head) if okf and fp then head = fp end end
         route = { points = head, goal = goal, name = name, idx = 1, action = link, lasers = lasers }
         R.last_route = head
         local len = 0
@@ -1819,6 +1913,7 @@ function nav_route(from, goal, name, quiet)
         end
     end
     pts = R.dezigzag(pts)
+    do local okf, fp = pcall(R.fix_corners, pts) if okf and fp then pts = fp end end
     route = { points = pts, goal = goal, name = name, idx = 1, partial = partial, lasers = lasers }
     R.last_route = pts
     log.info(string.format("[RE4Access] nav route: %.1f m, %d points, %d lasers, to %s", total, #pts, #lasers, tostring(name)))
@@ -1978,6 +2073,41 @@ end
 R.clear_spot = clear_spot
 
 R._split_at_link = split_at_link
+
+-- 11/26 Ch10 cave: there is no walking map (navmesh) down there, so N gave "No
+-- walking route found", and the straight lines it then suggested ran into rock.
+-- A route along a fixed list of points (taken from Claude's own walk through the
+-- cave), steered like any other route. Starts at the farthest point ahead that
+-- Leon can see.
+function R.go_points(pts, name, face, after, quiet)
+    R.door_wait = nil
+    R.going_on, R.pending_target, R.pending_door = nil, nil, nil
+    R.story = true
+    local pos = RE4Access.game.player_pos()
+    if not pos or not pts or #pts == 0 then return false end
+    local bi, bd
+    for i, q in ipairs(pts) do
+        local d = dist2d(q, pos)
+        if math.abs(q.y - pos.y) < 1.5 and d < 12 and (not bd or d < bd)
+            and not wall_between(pos.x, pos.y, pos.z, q.x, q.y, q.z) then bi, bd = i, d end
+    end
+    if not bi then return false end
+    while bi < #pts do
+        local q = pts[bi + 1]
+        if dist2d(q, pos) < 5 and not wall_between(pos.x, pos.y, pos.z, q.x, q.y, q.z) then bi = bi + 1 else break end
+    end
+    local out = { { x = pos.x, y = pos.y, z = pos.z } }
+    for i = bi, #pts do out[#out + 1] = pts[i] end
+    route = { points = out, goal = pts[#pts], name = name, idx = 1, face_target = face, after_text = after,
+        fixed = { pts = pts, name = name, face = face, after = after } }
+    R.last_route = out
+    local total = 0
+    for i = 2, #out do total = total + dist2d(out[i], out[i - 1]) end
+    log.info(string.format("[RE4Access] fixed route: %.1f m, %d points, from point %d, to %s", total, #out, bi, tostring(name)))
+    if not quiet then say(string.format("Route %d. Hold W.", math.max(1, math.floor(total + 0.5)))) end
+    RE4Access.game.face_point(out[math.min(#out, 2)], true)
+    return true
+end
 
 function R.go(target)
     R.door_wait = nil   -- a new route replaces waiting at the other door
@@ -2322,7 +2452,7 @@ function R.go(target)
         -- aim point is the nest up in the tree, not the item's spot on the ground
         -- under it (10/20: the line test went to the ground and picked a spot where
         -- a branch took every shot)
-        local ok, spot = pcall(RE4Access.game.shoot_spot, target.shoot or goal, from, { 6, 5, 7, 4, 9 })
+        local ok, spot = pcall(RE4Access.game.shoot_spot, target.shoot or goal, from, { 5, 6, 4, 7, 3, 8, 9, 10, 12, 14 })
         if ok and spot then
             if dist2d(spot, from) < 1.5 then
                 say("Shoot the nest from here: hold L, press K when I say fire.")
@@ -2422,6 +2552,20 @@ end
 
 function R.replan(pos, why)
     if not route then return end
+    -- a fixed path (no walking map here): start it again from where Leon is (11/26)
+    if route.fixed then
+        local f = route.fixed
+        replans = replans + 1
+        if replans > 6 then
+            say("Stuck. Route off. Press N again.")
+            route = nil
+            return
+        end
+        route = nil
+        say(why, false)
+        R.go_points(f.pts, f.name, f.face, f.after, true)
+        return
+    end
     -- Right after Continue (loading, cutscene) the map isn't there yet: a replan
     -- then fails with nonsense (10/14: "behind walls, not open yet" for the emblem).
     local st = RE4Access.game and RE4Access.game.state_text
@@ -2489,6 +2633,35 @@ function R.on_blocked(pos)
         say(text)
         return
     end
+    -- 11/26 Ch10 sewers: a shutter the story opens later (gm80_770 "shutter that opens
+    -- after the sewer breaker", a plain GmPortrayal, not a door) stood in the way of the
+    -- First Aid Spray: "Blocked, finding another way" over and over. Say what it is.
+    do
+        local sh_name
+        pcall(function()
+            local gm = sdk.get_managed_singleton("chainsaw.GimmickManager")
+            for _, e in ipairs(gm:get_field("_Core"):get_field("_entries"):get_elements()) do
+                local core = e:get_field("value")
+                if core and not sh_name then
+                    pcall(function()
+                        local go = core:call("get_GameObject")
+                        local n = go:call("get_Name")
+                        if n:find("シャッター", 1, true) then
+                            local q = go:call("get_Transform"):call("get_Position")
+                            if dist2d(q, pos) < 2.0 and math.abs(q.y - pos.y) < 2 and not core:call("get_Context"):call("hasDoneForMap") then sh_name = n end
+                        end
+                    end)
+                end
+            end
+        end)
+        if sh_name then
+            local when = sh_name:find("ブレーカー", 1, true) and " It opens after you switch on the circuit breaker; press N for the way there." or " The story opens it later; press N for the way on."
+            say("A closed shutter blocks the way." .. when, true)
+            log.info("[RE4Access] blocked by story shutter: " .. sh_name)
+            route = nil
+            return
+        end
+    end
     -- A live bear trap right here (10/12 PM: Resources (S) lies 1.5 m past a trap;
     -- the route bumped into the trap guard and said "Blocked, finding another way"
     -- 5 times). Shoot it shut first.
@@ -2505,6 +2678,18 @@ function R.on_blocked(pos)
             pcall(nav_route, { x = pos.x, y = pos.y, z = pos.z }, old.goal, old.name, true)
             if not route then route = old end
             route.lasers = route.lasers or old.lasers
+        else
+            -- ladder/window routes are not re-planned here: fix a cut corner from
+            -- exactly where Leon stands instead (11/26)
+            pcall(function()
+                local rest = { { x = pos.x, y = pos.y, z = pos.z } }
+                for k = route.idx + 1, #route.points do rest[#rest + 1] = route.points[k] end
+                local fixed = R.fix_corners(rest, 2)
+                if #fixed ~= #rest or fixed[2] ~= rest[2] then
+                    route.points = fixed
+                    route.idx = 1
+                end
+            end)
         end
         route.nudged_at = now
         route.precise_until = now + 4

@@ -829,7 +829,11 @@ local function cycle(step)
     end
     if selected.note then extra = extra .. ", " .. selected.note end
     -- opened lockers are empty (10/20: user walked to one and F never came)
-    if selected.name == "Locker" and selected.go and G.gimmick_done(selected.go) then extra = extra .. ", already opened, empty" end
+    if selected.name == "Locker" and selected.go and G.gimmick_done(selected.go) then extra = extra .. ", already opened, empty"
+    elseif selected.go and G.container_empty_text then
+        local et = G.container_empty_text(selected)
+        if et then extra = extra .. ", " .. et end
+    end
     if selected.name == "Document" and selected.go then
         local okr, rd = pcall(G.doc_read, selected.go)
         if okr and rd ~= nil then extra = extra .. (rd and ", already read, Backslash reads it again" or ", not read yet") end
@@ -1436,6 +1440,10 @@ local function face_selected()
         say("This locker is already opened and empty. You took what was inside.", true)
         return
     end
+    if selected.go and G.container_empty_text and G.container_empty_text(selected) then
+        say("This " .. selected.name:lower() .. " is already opened and empty. You took what was inside.", true)
+        return
+    end
     -- 11/2 Ch7: keyhole shelf with the Gold Bar, no key carried: no F angle exists, say why.
     -- Key found by its English name; other game languages fall through to the normal search.
     if selected.name == "Locker" and selected.go then
@@ -1965,6 +1973,49 @@ function G.church_heads_text(pos)
     local t = "This is the church door. It needs two heads to open. "
     if #st.have > 0 then t = t .. "You have the " .. st.have[1].name .. ". " end
     return t .. "Still missing: the " .. m.h.name .. ", " .. m.h.where .. ", " .. math.floor(m.dist + 0.5) .. " meters. Press N to go there."
+end
+
+-- 11/26 Ch10 room before the ballroom: the user walked to a "Glass Box" (the First
+-- Aid Spray cabinet, opened the day before) and a "Locker" (low chest gm84_513,
+-- still shut, F must be HELD 1 s, and the game checks that the view points at it)
+-- and heard only "Arrived at ...": no F, no idea why. Now on arrival: opened ones
+-- say so; shut ones turn the view to it and say tap or hold F.
+function G.trigger_hold(go)
+    local sec = 0
+    pcall(function()
+        local ih = go:call("getComponent(System.Type)", sdk.typeof("chainsaw.InteractHolder"))
+        for _, t in ipairs(ih:get_field("_Triggers"):get_elements()) do
+            local tr = t:get_field("_Trigger")
+            local s = tr and tr:get_field("<KeyHoldDownSec>k__BackingField")
+            if s and s > sec then sec = s end
+        end
+    end)
+    return sec
+end
+G.CONTAINER_NAMES = { ["Locker"] = true, ["Glass Box"] = true, ["Drawer"] = true, ["Chest"] = true }
+function G.container_empty_text(t)
+    if not (t and t.go and G.CONTAINER_NAMES[t.name]) then return nil end
+    if not G.gimmick_done(t.go) then return nil end
+    local inside = false
+    pcall(function()
+        for _, it in ipairs(items(t.pos, 1.5)) do
+            if math.abs(it.pos.y - t.pos.y) < 2.2 then inside = true end
+        end
+    end)
+    if inside then return nil end
+    return "already opened, empty"
+end
+function G.arrive_extra(name)
+    local t = selected
+    if not (t and t.go and t.name == name and G.CONTAINER_NAMES[name]) then return "" end
+    local empty = G.container_empty_text(t)
+    if empty then return ". It is " .. empty .. ". Nothing to take here." end
+    pcall(G.face_item, { x = t.pos.x, y = t.pos.y + 0.5, z = t.pos.z })
+    local hold = G.trigger_hold(t.go)
+    if hold > 0 then
+        return ". Turned you to it. Hold F down for " .. math.max(1, math.floor(hold + 0.5)) .. " second to open it. If no F comes, step back with S and try again."
+    end
+    return ". Turned you to it. Press F to open it. If no F comes, step back with S and try again."
 end
 
 -- After arriving somewhere: point at the N key.
@@ -3967,7 +4018,18 @@ local function aim_lock_frame(now)
                         local full = math.sqrt((aim.target.pos.x - eye.x) ^ 2 + (aim.target.pos.y - eye.y) ^ 2 + (aim.target.pos.z - eye.z) ^ 2)
                         local _, d = G.clear_shot(eye, aim.target.pos)
                         if d and d < full - 0.5 then
-                            say("A branch is in the way of the nest from here, shots will miss. Let go of L and press Backslash: I walk you to a clear spot.", true)
+                            -- 11/26: only send the user off when a real spot exists
+                            G.nest_spot_memo = G.nest_spot_memo or {}
+                            local mk = tostring(aim.target.key)
+                            if G.nest_spot_memo[mk] == nil then
+                                local oks, sp = pcall(G.shoot_spot, aim.target.pos, pos, { 5, 6, 4, 7, 3, 8, 9, 10, 12, 14 })
+                                G.nest_spot_memo[mk] = (oks and sp) and true or false
+                            end
+                            if G.nest_spot_memo[mk] then
+                                say("Something is in the way of the nest from here, shots will miss. Let go of L and press Backslash: I walk you to a spot with a clear shot.", true)
+                            else
+                                say("Something is in the way of the nest from here, and I found no spot you can walk to with a clear shot. It is optional: skip it, or try from another floor.", true)
+                            end
                             goto announced
                         end
                     end
@@ -4149,6 +4211,55 @@ local function update_drops(pos, now)
     end
 end
 
+-- 11/26 (Verdugo fight, user: "tell me in a battle what percentage of health the
+-- enemy has left"): U adds the enemy's health - the one L is locked on, else the
+-- nearest living enemy within 30 m. Big enemies (bosses, Garradors, Verdugo: 7000+
+-- health) also say it by themselves at 75, 50, 25 and 10 percent.
+function G.enemy_hp(ctx)
+    local hp = ctx:call("get_HitPoint")
+    local cur, max = hp:call("get_CurrentHitPoint"), hp:call("get_DefaultHitPoint")
+    if not cur or not max or max <= 0 then return nil end
+    return cur, max, math.max(cur > 0 and 1 or 0, math.floor(cur * 100 / max + 0.5))
+end
+function G.enemy_health_text(pos)
+    local ctx
+    if aim.target and aim.target.ctx then ctx = aim.target.ctx end
+    if not ctx then
+        local bd
+        for _, e in ipairs(enemies(pos, 30)) do
+            local okh, cur = pcall(G.enemy_hp, e.ctx)
+            if okh and cur and cur > 0 and (not bd or e.dist < bd) then ctx, bd = e.ctx, e.dist end
+        end
+    end
+    if not ctx then return nil end
+    local okh, cur, max, pct = pcall(G.enemy_hp, ctx)
+    if not okh or not cur or cur <= 0 then return nil end
+    local who = max >= 7000 and "Big enemy" or "Enemy"
+    return who .. " " .. pct .. " percent left"
+end
+G.hp_bands = {}
+G.hp_watch_at = 0
+function G.enemy_hp_watch(pos, now)
+    if now < G.hp_watch_at then return end
+    G.hp_watch_at = now + 0.5
+    local seen = {}
+    for _, e in ipairs(enemies(pos, 40)) do
+        local okh, cur, max, pct = pcall(G.enemy_hp, e.ctx)
+        if okh and cur and max >= 7000 then
+            local k = e.key
+            seen[k] = true
+            local band = pct > 75 and 4 or pct > 50 and 3 or pct > 25 and 2 or pct > 10 and 1 or 0
+            local prev = G.hp_bands[k]
+            G.hp_bands[k] = band
+            if prev and band < prev and cur > 0 then
+                local t = band == 3 and "Big enemy at 75 percent." or band == 2 and "Big enemy at half health." or band == 1 and "Big enemy at 25 percent." or "Big enemy almost dead, " .. pct .. " percent."
+                say(t, false)
+            end
+        end
+    end
+    for k in pairs(G.hp_bands) do if not seen[k] then G.hp_bands[k] = nil end end
+end
+
 local function say_health()
     local ok, text = pcall(function()
         local pc = sdk.get_managed_singleton("chainsaw.CharacterManager"):call("getPlayerContextRef")
@@ -4158,7 +4269,9 @@ local function say_health()
         local note = pct <= 35 and ". Low, heal soon." or (pct <= 70 and ". Hurt." or "")
         return "Health " .. pct .. " percent" .. note
     end)
-    say(ok and text or "Health unknown")
+    local et
+    pcall(function() local pos = G.player_pos() if pos then et = G.enemy_health_text(pos) end end)
+    say((ok and text or "Health unknown") .. (et and (". " .. et .. ".") or ""))
 end
 
 function G.no_route_hint(goal)
@@ -4835,6 +4948,19 @@ local function next_step()
         follow.on = false
         selected = ho
         say("Next: " .. ho.name .. ". " .. ho.tip, true)
+        -- 11/26 Ch10 cave: steps marked no_route are spoken only; fixed_path steps
+        -- walk a recorded path (no walking map there)
+        if ho.no_route then
+            if RE4Access.route and RE4Access.route.active() then RE4Access.route.stop(true) end
+            if ho.face then pcall(G.face_point, ho.face, true) end
+            return
+        end
+        if ho.fixed_path and RE4Access.route and RE4Access.route.go_points then
+            RE4Access.speak_hold = true
+            local okf = RE4Access.route.go_points(ho.fixed_path, ho.name, ho.face, ho.after)
+            RE4Access.speak_hold = nil
+            if okf then return end
+        end
         if RE4Access.route then RE4Access.speak_hold = true RE4Access.route.go(ho) RE4Access.speak_hold = nil end
         return
     end
@@ -5331,12 +5457,33 @@ function G.clear_shot(eye, tgt)
     -- crosshair sat on it but 4 shots hit a branch 1.5 m under it)
     for _, cfg in ipairs({ { layer = 2, mask = 788, group = 12 }, { layer = 4, mask = 0xFFFFFFFF, group = 0 }, { layer = 8, mask = 0xFFFFFFFF, group = 0 } }) do
         local ok, hit, d = pcall(R.cast, eye.x, eye.y, eye.z, tgt.x, tgt.y, tgt.z, cfg)
+        -- invisible zones (enemy flight/AI areas) don't stop bullets: look past them
+        -- (11/26 Ch10 Ruby nest: "a branch is in the way" from every spot)
+        local tries = 0
+        while ok and hit and d and R.last_hit_name and tries < 4 do
+            local nm = R.last_hit_name()
+            if not (nm and (nm:find("Area", 1, true) or nm:find("エリア", 1, true))) then break end
+            tries = tries + 1
+            local k = math.min(1, (d + 0.05) / math.max(full, 0.01))
+            local sx, sy, sz = eye.x + (tgt.x - eye.x) * k, eye.y + (tgt.y - eye.y) * k, eye.z + (tgt.z - eye.z) * k
+            local ok2, hit2, d2 = pcall(R.cast, sx, sy, sz, tgt.x, tgt.y, tgt.z, cfg)
+            ok, hit = ok2, hit2
+            d = hit2 and d2 and (full * k + d2) or nil
+        end
         -- hits in the first 0.3 m are Leon's own head/arm, not a wall (10/18:
         -- tripwire bomb by the cliff path, eye at 1.6 m hit at 0.02 m, so L
         -- flipped between the bomb and "No enemy in sight" and never said fire)
         -- layer 4 (bodies) also hits Leon's raised gun/arm at 0.6 m while aiming
         local own = cfg.layer == 4 and 1.0 or 0.3
-        if ok and hit and d and d > own and d < full - 0.3 then return false, d end
+        -- 11/26: the near-eye exception is for Leon's own body/gun only; a wall
+        -- touching the eye made spots pressed against walls look clear
+        if ok and hit and d and d <= own and R.last_hit_name then
+            local nm = R.last_hit_name()
+            if nm and not (nm:find("^ch0") or nm:find("^wp") or nm:find("^Wp")) then own = 0 end
+        end
+        -- a hit on the target's own body (the nest itself) is a hit, not a wall (11/26)
+        local on_target = ok and hit and hit.x and math.sqrt((hit.x - tgt.x) ^ 2 + (hit.y - tgt.y) ^ 2 + (hit.z - tgt.z) ^ 2) < 0.8
+        if ok and hit and d and d > own and d < full - 0.3 and not on_target then return false, d end
     end
     return true
 end
@@ -5350,33 +5497,71 @@ end
 
 -- A floor spot at one of the given distances from a target, with a clear line to
 -- it, reachable without crossing a laser and not next to a bear trap.
+-- How sure a shot from this floor spot is: share of lines that get through when Leon
+-- stands up to 0.3 m off the spot (11/26: the first spot found for the Ch10 egg
+-- nest was a hairline gap, 6 of 81 lines clear; shots would mostly hit the wall).
+function G.shot_sureness(x, y, z, tgt)
+    local ok, n = 0, 0
+    for _, o in ipairs({ { 0, 0 }, { 0.3, 0 }, { -0.3, 0 }, { 0, 0.3 }, { 0, -0.3 } }) do
+        for _, ty in ipairs({ 0, -0.12 }) do
+            n = n + 1
+            if G.clear_shot({ x = x + o[1], y = y + 1.5, z = z + o[2] }, { x = tgt.x, y = tgt.y + ty, z = tgt.z }) then ok = ok + 1 end
+        end
+    end
+    return ok / n
+end
+
 function G.shoot_spot(tgt, pos, radii)
+    -- 11/26 Ch10 Brown Chicken Egg nest: 18 directions missed the clear spot, the
+    -- floor test started at the nest's height and hit a roof, and the nearest
+    -- "clear" spot was a hairline gap. Now 36 directions, floor from Leon's level
+    -- first (then the nest's), only spots the walking map reaches, and a sure shot
+    -- (7 of 10 lines) wins over a short walk; the surest spot if none is sure.
     local R = RE4Access.route
     if not R or not tgt then return nil end
-    local best, best_len
+    local best, best_len, best_sure
     for _, r in ipairs(radii) do
-        for k = 0, 17 do
-            local a = k * math.pi / 9
+        for k = 0, 35 do
+            local a = k * math.pi / 18
             local x, z = tgt.x + math.sin(a) * r, tgt.z + math.cos(a) * r
-            local g = R.cast(x, tgt.y + 3, z, x, tgt.y - 4, z)
-            if not g or math.abs(g.y - pos.y) >= 3 then g = R.cast(x, pos.y + 2.5, z, x, pos.y - 3, z) end
-            if g and math.abs(g.y - pos.y) < 3 and G.clear_shot({ x = x, y = g.y + 1.5, z = z }, tgt) then
-                local spot = { x = x, y = g.y, z = z }
-                local pts, len
-                -- at least 3.5 m from any live trap (10/12: caught right after arriving)
-                local trap_near = G.near_bear_trap(spot)
-                for _, tp in ipairs(G.trap_positions(spot)) do
-                    if (tp.x - x) ^ 2 + (tp.z - z) ^ 2 < 12.25 then trap_near = true end
-                end
-                if not trap_near then pts, len = R.nav_points(pos, spot) end
-                if pts then
-                    local _, lasers = R.avoid_traps(pts)
-                    if #lasers == 0 and (not best_len or len < best_len) then best, best_len = spot, len end
+            for _, top in ipairs({ pos.y + 2.5, tgt.y + 3 }) do
+                local g = R.cast(x, top, z, x, top - 5.5, z)
+                if g and math.abs(g.y - pos.y) < 4 and G.clear_shot({ x = x, y = g.y + 1.5, z = z }, tgt) then
+                    local sure = G.shot_sureness(x, g.y, z, tgt)
+                    if not best_sure or sure >= math.min(best_sure, 0.7) then
+                        local spot = { x = x, y = g.y, z = z }
+                        local pts, len
+                        -- at least 3.5 m from any live trap (10/12: caught right after arriving)
+                        local trap_near = G.near_bear_trap(spot)
+                        for _, tp in ipairs(G.trap_positions(spot)) do
+                            if (tp.x - x) ^ 2 + (tp.z - z) ^ 2 < 12.25 then trap_near = true end
+                        end
+                        if not trap_near then pts, len = R.nav_points(pos, spot) end
+                        local e = pts and pts[#pts]
+                        if e and ((e.x - x) ^ 2 + (e.z - z) ^ 2 > 0.36 or math.abs((e.y or g.y) - g.y) > 1.0) then pts = nil end
+                        -- the last steps must not run into a wall or railing (11/26: the
+                        -- only "clear" egg-nest spot was past a balcony railing)
+                        if pts and #pts >= 2 then
+                            for i = math.max(1, #pts - 2), #pts - 1 do
+                                local a1, b1 = pts[i], pts[i + 1]
+                                if math.abs(a1.y - b1.y) < 0.3 and (R.cast(a1.x, a1.y + 0.55, a1.z, b1.x, b1.y + 0.55, b1.z) or R.cast(a1.x, a1.y + 1.35, a1.z, b1.x, b1.y + 1.35, b1.z)) then pts = nil break end
+                            end
+                        end
+                        if pts then
+                            local _, lasers = R.avoid_traps(pts)
+                            local s7 = math.min(sure, 0.7)
+                            if #lasers == 0 and (not best or s7 > math.min(best_sure, 0.7) or (s7 == math.min(best_sure, 0.7) and len < best_len)) then
+                                best, best_len, best_sure = spot, len, sure
+                            end
+                        end
+                    end
+                    break
                 end
             end
         end
-        if best then break end
+        if best and best_sure >= 0.7 then break end
     end
+    if best then log.info(string.format("[RE4Access] shoot spot (%.2f,%.2f,%.2f) sure %.1f walk %.1f", best.x, best.y, best.z, best_sure, best_len or -1)) end
     return best, best_len
 end
 
@@ -6123,7 +6308,11 @@ local function update_walk(now)
         local d = math.sqrt((selected.pos.x - pos.x) ^ 2 + (selected.pos.z - pos.z) ^ 2)
         if d < 1.5 and math.abs(selected.pos.y - pos.y) < 1.8 then
             if walk.last_dist_said ~= 0 then
-                if not (RE4Access.route and RE4Access.route.active()) then say("Arrived at " .. selected.name) end
+                if not (RE4Access.route and RE4Access.route.active()) then
+                    local ex = ""
+                    pcall(function() ex = G.arrive_extra(selected.name) or "" end)
+                    say("Arrived at " .. selected.name .. ex)
+                end
                 walk.last_dist_said = 0
             end
         else
@@ -6267,7 +6456,26 @@ function G.icon_owner()
     end
     for _, it in ipairs(items(ipos, 1.5)) do
         local d = math.sqrt((it.pos.x - ipos.x) ^ 2 + (it.pos.y - ipos.y) ^ 2 + (it.pos.z - ipos.z) ^ 2)
-        if d < 1.0 and (not bd or d < bd) then best, bd = { name = it.name:gsub(", in a %a+$", "") .. ", pick it up", go = it.go }, d end
+        if d < 1.0 and (not bd or d < bd) then
+            local nm = it.name:gsub(", in a %a+$", "") .. ", pick it up"
+            -- 11/26 Verdugo fight: "F ready: First Aid Spray, pick it up" 8 times while the
+            -- F was really the shut chest around it (hold F 1 s). Say the chest.
+            local kind = it.name:match(", in a (%a+)$")
+            if kind then
+                -- the closed container next to it (the Verdugo-room spray lay 1.35 m from
+                -- its chest's middle, outside route.cabinet_of's 1.3 m)
+                local cab
+                pcall(function()
+                    for _, t in ipairs(scan_things(it.pos, 1.8)) do
+                        if t.go:call("getComponent(System.Type)", sdk.typeof("chainsaw.GmLocker")) and math.abs(t.pos.y - it.pos.y) < 2.2 then cab = t end
+                    end
+                end)
+                if cab and not G.gimmick_done(cab.go) then
+                    nm = "the " .. kind .. " with " .. it.name:gsub(", in a %a+$", "") .. ": HOLD F for 1 second to open it"
+                end
+            end
+            best, bd = { name = nm, go = it.go }, d
+        end
     end
     fi.cache_pos, fi.cache = ipos, best and { best.name, best.go } or nil
     if best then return best.name, best.go end
@@ -8168,6 +8376,7 @@ function G.on_frame()
                     update_trail(pos)
                     update_visited(pos, now)
                     pcall(G.locker_watch, pos, now)
+                    pcall(G.enemy_hp_watch, pos, now)
                     local okr, errr = pcall(update_reach, pos, now)
                     if not okr then log.info("[RE4Access] reach error: " .. tostring(errr)) end
                 end

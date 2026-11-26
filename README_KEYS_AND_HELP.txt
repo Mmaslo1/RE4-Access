@@ -113,7 +113,8 @@ FIGHTING
 L                 Aim. The aim locks onto the nearest enemy.  K: fire.  R: reload.
 Apostrophe        Enemies around you: run or fight advice.
 X                 Your gun and ammo.  Shift+X: unlimited ammo on or off.
-U                 Your health.
+U                 Your health, then the enemy's health in percent (the one L is locked on, or the nearest).
+                  Big enemies (bosses, Garradors, Verdugo) also say it by themselves at 75, 50, 25 and 10 percent.
 Space             Knife: also turns you to the nearest enemy.
 See FIGHT_GUIDE.txt for more.
 

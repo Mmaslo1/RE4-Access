@@ -1,3 +1,60 @@
 # RE4 Access audio descriptions for cutscenes.
 # [Kind_ID] title, then lines: frame | text. Written by Claude from the mod's cutscene recordings.
 # Scenes are added after the recorder has seen them once (REAccess_ad_record.txt).
+
+[1_10092] Chapter 10 opening: Ada on the castle wall
+30 | Night. Ada Wong, in a red sweater, walks along the castle battlements. Fires burn in metal braziers.
+330 | She stops and raises a radio to her ear.
+1265 | A wooden wall below: a Ganado's body hangs over the broken beams. Leon fought here.
+1445 | Ada glances down over the wall at the wreckage.
+2350 | She lowers the radio and looks across at the castle.
+2700 | Through iron bars, a guard in robes walks past. Ada stays hidden.
+3050 | Ada turns and walks off along the wall, past a fire.
+
+[1_10041] Chapter 10: the throne room, Ashley is made to drink, Leon falls into the pit
+60 | Tall carved wooden doors of the throne room.
+180 | Leon pushes in, handgun raised.
+300 | Ashley stands ahead, held by a hooded cultist. A red symbol is drawn in blood across her face. She is grinning strangely.
+780 | The floor gives way under Leon. He falls flat, stunned.
+900 | Salazar, the small old castellan, sits on a huge red leather throne in a blue coat with gold trim and a ruffled collar. He waves a hand.
+1260 | A cultist holds out an ornate silver chalice.
+1500 | From above: a round raised altar, red carpeted stairs, pink flames burning on stone pedestals. Robed cultists hold Ashley there.
+1920 | They force the chalice to Ashley's lips and pour it into her mouth.
+2280 | Ashley drops to her knees, choking and coughing up dark blood.
+2760 | Dark veins spread across the palm of her hand. The parasite is taking hold.
+3120 | Leon clutches his throat. His own parasite reacts.
+3720 | Ashley reaches out to Leon, dark veins up her arms.
+3840 | A trapdoor opens under Leon. He drops into darkness.
+4000 | He falls down a deep rock shaft past bones and skulls.
+4500 | Leon catches a hanging chain and slides down it into the dark.
+5100 | He lands in shallow water at the bottom of a cave pit, among bones.
+5220 | Leon stands, gun in hand, and looks up toward the faint light far above.
+
+[1_10042] Chapter 10: something watches Leon from the sewers
+0 | Seen through the eyes of a creature, everything blurred and tinted red. It rushes out of a dark rock tunnel.
+120 | It races along metal grating, looking down through the bars.
+360 | It stops above a grate, peering down. Something is hunting Leon.
+
+[1_10044] End of Chapter 10: in the elevator, the parasite strikes, Saddler's vision, Luis
+0 | Inside the rising elevator. Close on Leon's arm.
+240 | Dark veins crawl up his forearm. The parasite is moving.
+360 | Leon grabs his head in pain.
+480 | His vision blurs and tilts. He drops to the floor.
+720 | Darkness. A hooded figure appears in a vision: Saddler, the cult leader, in a dark robe with a golden pendant, a twisted glowing staff beside him.
+1200 | Saddler reaches a hand toward Leon as he speaks.
+2580 | Saddler gives his order. A face in shadow under a wide black hat answers him.
+2940 | Leon snaps awake on the elevator floor, gasping, sweat on his face.
+3300 | He gets up, grips his shotgun, and steps out through the elevator gate.
+3780 | Luis is waiting, leaning by a steel stairway. He grins and holds up a small silver tin taped with yellow: the suppressant pills.
+
+[1_10045] Chapter 11 opening: Luis and Leon in the mine
+60 | A dim mine tunnel with wooden beams. Leon sits on a crate, resting a hand on his knee, flexing his fingers.
+300 | He looks down at his arm. The dark veins are gone for now.
+540 | Luis holds out his hand, rings on his fingers.
+660 | Luis leans against a support beam, watching Leon.
+1020 | Leon turns a used injector pen over in his hand.
+1260 | Leon stands, ready to move.
+1620 | Luis taps a small brass case in his hands.
+1920 | Luis picks up a long wooden pole and grins, holding it like a knight's lance.
+2160 | He swings it out wide. Leon takes it from him and tosses it aside.
+2400 | Luis throws his arms up in mock protest, then follows Leon.

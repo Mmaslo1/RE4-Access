@@ -1,7 +1,7 @@
 ﻿; RE4 Access one-click installer. Build: ISCC.exe RE4Access_Setup.iss
 ; Source = the clean share folder made from build_tester_package.ps1 (no owner/ammo files).
-#define Ver "0.29.0"
-#define Src "C:\Users\micha\Downloads\RE4Access_Share_0.29.0"
+#define Ver "0.29.1"
+#define Src "C:\Users\micha\Downloads\RE4Access_Share_0.29.1"
 #define GameDirName "RESIDENT EVIL 4  BIOHAZARD RE4"
 
 [Setup]

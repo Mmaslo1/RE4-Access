@@ -55,7 +55,7 @@ end
 local function cave(name, p, pos, tip)
     local where = ""
     pcall(function() where = math.floor(d2(p, pos) + 0.5) .. " meters, " .. G.describe_position(p, pos, G.facing()) end)
-    return { name = name .. ", " .. where, pos = p, dist = d2(p, pos), no_route = true, key = "ch10_cave",
+    return { name = name .. ", " .. where, pos = p, dist = d2(p, pos), no_route = true, key = "ch10_cave", face = p,
         tip = tip or "Hold W that way, then press N again." }
 end
 
@@ -78,6 +78,24 @@ end
 function C.part1(pos)
     -- Approach from the Grand Hall (the ballroom is not loaded yet from there):
     -- big gate past the Chimera statue, east hall, stairs up, door, room, door.
+    -- 11/25 user test: the Chapter 10 save starts Leon in the railed pocket just north of
+    -- the Chimera statue; the navmesh goes straight through the railing (blocked 4x).
+    -- Way out (ray-checked 11/25): around the statue's east side, south, west along the
+    -- corridor, north up the west side, then the gate route.
+    if pos.y > 26.8 and pos.y < 28.5 then
+        if pos.x > 130.4 and pos.x < 134.6 and pos.z > 41.2 and pos.z < 43.4 then
+            return spot("the corridor south of the statue", V(132.4, 27.3, 36.6), V(128.0, 27.3, 36.5),
+                "Press N.", "ch10_pocket1", pos, { spoken = "corridor" })
+        end
+        if pos.x > 128.6 and pos.x < 135.5 and pos.z > 34.5 and pos.z < 39.3 then
+            return spot("the west end of the corridor", V(127.6, 27.3, 36.6), V(127.7, 27.3, 42.0),
+                "Press N.", "ch10_pocket2", pos, { spoken = "corridor end" })
+        end
+        if pos.x <= 128.6 and pos.z > 34.5 and pos.z < 41.6 then
+            return spot("the west side of the statue", V(127.7, 27.3, 42.0), V(130.0, 27.3, 44.6),
+                "Press N.", "ch10_pocket3", pos, { spoken = "west side" })
+        end
+    end
     if pos.x < 135.6 and pos.y < 30 then
         return spot("the big gate past the Chimera statue", V(134.4, 27.3, 56.4), V(137.0, 28.3, 56.4),
             "Press F, then hold W to push it open and walk through. Then press N.", "ch10_gate1", pos, { spoken = "big gate" })
@@ -123,7 +141,7 @@ function C.part1(pos)
     -- round to the north balcony (tested 11/21)
     if rdone == false and pos.y > 31 and pos.x > 190 and pos.z < 56 then
         return spot("the balcony edge to jump down", V(198.0, 32.5, 51.5), V(195.5, 32.5, 52.1),
-            "Hold W and tap F to jump down. Then press N.", "ch10_drop", pos, { spoken = "edge" })
+            "Do not turn. Hold W and keep tapping F; Leon jumps over the railing. Then press N.", "ch10_drop", pos, { spoken = "edge" })
     end
     if rdone == false then
         return spot("the second ballroom lever", V(200.1, 32.5, 62.1), V(199.6, 33.5, 61.4),
@@ -174,32 +192,49 @@ function C.part1(pos)
 end
 
 -- ===================== PART 2: Make your way to the surface =====================
-local CAVE = { -- pocket past the narrow gap, north to the crawl hole
-    V(321.4, -38.6, 55.5), V(321.8, -38.6, 61.9), V(320.4, -38.6, 67.0), V(317.8, -38.6, 73.2), V(313.9, -38.6, 78.3),
+-- Claude's recorded walk 11/21 (tools/ch10/trail.txt lines 76-202): out of the
+-- squeeze, round the rock, north up the water passage to the crawl hole.
+C.CAVE_PATH = {
+    V(316.26, -38.39, 53.09), V(317.91, -38.39, 53.89), V(318.42, -38.39, 53.61), V(319.49, -38.55, 52.46), V(320.59, -38.62, 53.34),
+    V(321.25, -38.62, 54.49), V(321.45, -38.62, 55.49), V(321.01, -38.62, 55.93), V(321.05, -38.62, 57.04),
+    V(321.55, -38.62, 58.25), V(321.81, -38.62, 59.55), V(322.04, -38.62, 60.77), V(321.81, -38.62, 61.85),
+    V(321.54, -38.62, 62.89), V(321.25, -38.62, 64.23), V(320.89, -38.62, 65.68), V(320.44, -38.62, 67.06),
+    V(320.14, -38.62, 68.21), V(319.58, -38.62, 69.60), V(319.00, -38.62, 70.73), V(318.60, -38.62, 71.80),
+    V(317.84, -38.62, 73.19), V(317.23, -38.62, 74.41), V(316.53, -38.62, 75.50), V(315.83, -38.62, 76.62),
+    V(314.93, -38.62, 77.69), V(313.85, -38.62, 78.46), V(313.60, -38.62, 78.10),
 }
 function C.part2(pos)
     -- the landing pit (bones, water): east end has a narrow gap
     if pos.y < -37 and pos.x > 295 and pos.x < 309.5 and pos.z > 44 and pos.z < 60 then
         local gap = V(307.2, -38.45, 47.4)
         if d2(gap, pos) < 1.5 then
-            return { name = "the narrow gap", pos = gap, dist = 0, no_route = true, key = "ch10_gap",
-                tip = "It is right here, east of you. Face east and hold W: Leon squeezes through by himself. Then press N." }
+            return { name = "the narrow gap", pos = gap, dist = 0, no_route = true, key = "ch10_gap", face = V(308.36, -37.4, 48.11),
+                tip = "It is right here. I turned you to it. Hold F for 1 second: Leon squeezes through by himself. Then press N." }
         end
         return cave("the narrow gap at the east end of this pit", gap, pos,
             "The Green Herb is near the south side. Hold W that way, then press N again.")
     end
-    -- past the gap: north along the water passage to the crawl hole
+    -- past the gap: north along the water passage to the crawl hole (GmInterstice1Motion
+    -- _OnlyCrouch = true: F works only while crouched, 11/26 user held F standing).
+    -- 11/26 user test: "No walking route found to the water passage north" (no
+    -- walking map in this cave) and the straight lines ran into rock. Now a fixed
+    -- route along Claude's own recorded walk of 11/21 (trail.txt), checked with rays.
     if pos.y < -37 and pos.x > 309.5 and pos.x < 325 and pos.z > 44 and pos.z < 80 then
-        local hole = V(313.6, -38.6, 78.1)
-        if d2(hole, pos) < 2.0 then
-            return { name = "the low crawl hole", pos = hole, dist = 0, no_route = true, key = "ch10_crawl",
-                tip = "Press E to crouch, face west, and hold W. Leon crawls through. Then press N." }
+        -- still inside the squeeze (Leon moves by himself, camera locked)
+        if pos.x < 315.9 and pos.z < 52.9 and pos.x > 309.5 and d2(pos, V(316.26, -38.39, 53.09)) > 0.8 then
+            return { name = "the narrow gap", pos = V(316.26, -38.39, 53.09), dist = 0, no_route = true, key = "ch10_gap2",
+                tip = "You are squeezing through it now. Keep holding W until Leon is out, then press N." }
         end
-        local i = 1
-        for k, p in ipairs(CAVE) do if d2(p, pos) < d2(CAVE[i], pos) then i = k end end
-        if d2(CAVE[i], pos) < 2.5 and i < #CAVE then i = i + 1 end
-        if pos.z < 53 and pos.x > 319 and pos.z < 50 then i = 1 end
-        return cave("the water passage north", CAVE[i], pos)
+        local hole = V(313.6, -38.6, 78.1)
+        if d2(hole, pos) < 1.2 then
+            return { name = "the low crawl hole", pos = hole, dist = 0, no_route = true, key = "ch10_crawl",
+                face = V(312.7, -38.1, 77.8),
+                tip = "I turned you to it. Press E to crouch first: this hole only works while crouching. Then hold F for 1 second, and Leon crawls through by himself. Then press N." }
+        end
+        return { name = "the low crawl hole", pos = hole, dist = d2(hole, pos), key = "ch10_cavepath",
+            fixed_path = C.CAVE_PATH, face = V(311.6, -38.1, 77.3),
+            tip = "Walking you along the water passage north to a low hole.",
+            after = "Press E to crouch first: this hole only works while crouching. Then hold F for 1 second, and Leon crawls through by himself. Then press N." }
     end
     -- the old prison room: crown, herb, ladder (map data works from here)
     if pos.y < -33 and pos.x > 255 and pos.x < 310 then
@@ -208,6 +243,22 @@ function C.part2(pos)
             local c = {} for k, v in pairs(crown) do c[k] = v end
             c.tip = "A treasure. Press F at F ready."
             return c
+        end
+        -- 11/26: the herb and the ladder are past a narrow squeeze gap (gm91_004,
+        -- hold F 1 s). The route ran into its blocker. If the way there goes
+        -- through the gap, stop in front of it first.
+        local GAP = V(270.19, -37.19, 63.17)
+        local function through_gap(goal)
+            local okn, pts = pcall(RE4Access.route.nav_points, pos, goal)
+            if not okn or not pts then return false end
+            for _, q in ipairs(pts) do if d2(q, GAP) < 1.2 and math.abs(q.y - GAP.y) < 1.5 then return true end end
+            return false
+        end
+        local herb0 = item_near("Yellow Herb", pos, 25)
+        local next_goal = (herb0 and pos.x < 280) and V(270.4, -37.2, 67.85) or V(274.65, -37.19, 64.81)
+        if d2(pos, GAP) > 1.6 and through_gap(next_goal) then
+            return spot("the narrow gap", V(269.05, -37.19, 62.28), V(270.19, -36.4, 63.17),
+                "Hold F for 1 second: Leon squeezes through by himself. Then press N.", "ch10_gap3", pos, { spoken = "narrow gap" })
         end
         local herb = item_near("Yellow Herb", pos, 12)
         if herb and pos.x < 280 then
@@ -228,6 +279,24 @@ function C.part2(pos)
         if br == false then
             return spot("the circuit breaker", V(147.25, -30.4, -28.3), V(147.9, -29.4, -28.4),
                 "Press F. Verdugo comes after this: then press N right away.", "ch10_breaker", pos)
+        end
+        -- 11/26: the First Aid Spray in a chest (177.2,-10.8) sits behind shutter gm80_770,
+        -- which opens when the breaker is on. Optional, but handy before Verdugo.
+        if br == true then
+            local spray = item_near("First Aid Spray", pos, 45)
+            if spray and spray.pos.x > 170 and spray.pos.x < 182 and spray.pos.z > -14 and spray.pos.z < -8 then
+                -- 11/26: the tall cabinet (gm Locker at 177.37,-12.11) opens to the WEST; the
+                -- spray and gunpowder lie on its shelf 1.2 m north of its middle. From the
+                -- route's end (176.2,-11.7) the frame blocks them: no F. Stand in front of them.
+                local _, cdone = gfind("Locker", 177.37, -12.11, 0.6)
+                pcall(function() for _, t in ipairs(G.scan_things(V(177.37, -29.65, -12.11), 0.5)) do cdone = G.gimmick_done(t.go) end end)
+                if cdone then
+                    return spot("the First Aid Spray on the cabinet shelf", V(176.35, -30.4, -10.9), V(177.17, -29.55, -10.77),
+                        "Press F to take it. Then F again for the gunpowder next to it. Then press N.", "ch10_spray2", pos, { spoken = "First Aid Spray" })
+                end
+                return spot("the tall cabinet with the First Aid Spray", V(176.3, -30.4, -12.1), V(177.37, -29.2, -12.11),
+                    "Hold F for 1 second to open it. Then press N: I put you in front of the spray.", "ch10_cabinet", pos, { spoken = "cabinet" })
+            end
         end
         local _, sh = gfind("gm80_799", 131.6, -17.2)
         if sh == false and pos.x < 140 then
