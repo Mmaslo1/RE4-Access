@@ -405,6 +405,7 @@ local function follow(pos, now)
             if nav_route({ x = pos.x, y = pos.y, z = pos.z }, goal, name, true) then return end
             start_search({ x = pos.x, y = pos.y, z = pos.z }, goal, name)
             search.quiet = true
+            search.after_through = true
             return
         end
         if dist2d(pos, a.entry) > 4 and math.abs(pos.y - a.entry.y) < 1.5 then
@@ -2743,6 +2744,19 @@ function R.on_frame(now)
             end
         end
     end
+    -- 11/26: right after a ladder Leon is still in the climb-off animation and the first
+    -- search from there failed ("No walking route found"; N again worked). Try once more.
+    if R.through_retry and not search and os.clock() >= R.through_retry.at then
+        local tr = R.through_retry
+        R.through_retry = nil
+        local p0 = RE4Access.game.player_pos()
+        if p0 and not route then
+            if not nav_route({ x = p0.x, y = p0.y, z = p0.z }, tr.goal, tr.name, true) then
+                start_search({ x = p0.x, y = p0.y, z = p0.z }, tr.goal, tr.name)
+                search.quiet = true
+            end
+        end
+    end
     if search then
         local ok, res = pcall(step_search, search)
         if not ok then
@@ -2764,6 +2778,11 @@ function R.on_frame(now)
                 search = nil
                 local lz = route.lasers[1]
                 say("Can't get around the tripwire bomb. Shoot it first: hold L, press K, from at least 4 meters away. Then hold W.", true)
+                return
+            end
+            if s.after_through and not route then
+                search = nil
+                R.through_retry = { goal = s.goal, name = s.name, at = os.clock() + 1.5 }
                 return
             end
             if s.best and s.best_d < start_d - 3 then

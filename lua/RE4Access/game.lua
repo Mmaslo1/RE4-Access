@@ -1275,9 +1275,26 @@ if not RE4Access.grenade_hooked2 then
     watch("chainsaw.WeaponItem", "reduceAmmoCount", 1, function(args)
         local id = item_id(sdk.to_managed_object(args[2])); if id and GREN[id] then return GREN[id] .. " by " .. (sdk.to_int64(args[3]) & 0xFFFFFFFF) end
     end)
-    watch("chainsaw.Item", "reduceCount", 1, function(args)
-        local id = item_id(sdk.to_managed_object(args[2])); if id and GREN[id] then return GREN[id] .. " by " .. (sdk.to_int64(args[3]) & 0xFFFFFFFF) end
-    end)
+    -- 11/26 (try 3): a real throw in the Ch11 giant fight logged "Item.reduceCount Hand
+    -- Grenade" then "onRemoveItem Hand Grenade"; useWeapon was never called. So the spend is
+    -- Item.reduceCount: skip it for grenades while unlimited ammo is on.
+    do
+        local td = sdk.find_type_definition("chainsaw.Item")
+        for _, m in ipairs(td:get_methods()) do
+            if m:get_name() == "reduceCount" and m:get_num_params() == 1 then
+                local okh, eh = pcall(sdk.hook, m, function(args)
+                    local id = item_id(sdk.to_managed_object(args[2]))
+                    if id and GREN[id] then
+                        local G = RE4Access.game
+                        local on = G and G.unlimited_ammo
+                        log.info("[RE4Access] grenade path: Item.reduceCount " .. GREN[id] .. ", unlimited " .. tostring(on))
+                        if on then return sdk.PreHookResult.SKIP_ORIGINAL end
+                    end
+                end, function(r) return r end)
+                log.info("[RE4Access] unlimited grenades: reduceCount hook " .. tostring(okh) .. " " .. tostring(eh))
+            end
+        end
+    end
 end
 -- (old) keep the equipped gun's magazine full - no longer used.
 local ammo_fill = { at = 0, logged = false }
@@ -6131,7 +6148,7 @@ local STATE_NAMES = {
     ["chainsaw.GameOverCameraController"] = "Game over",
     -- 10/19 lake monster fight: the boat has its own camera; without this the
     -- state stayed "Cutscene" and no hot key worked
-    ["chainsaw.VehicleCameraController"] = "In the boat",
+    ["chainsaw.VehicleCameraController"] = "Riding",
 }
 local last_cam, cam_since, announced_cam = nil, 0, nil
 G.state_text = nil
@@ -6537,6 +6554,7 @@ local function update_want(now, on)
     if now < w.check_at or not on or G.fsearch then return end
     local owner, ogo = prompt_owner()
             if owner then owner = owner:gsub("Cannon V2", "cannon") end
+            if owner == "Map Icon Only" then owner = "the marked spot" end -- 11/26 Ch11 painted rock
     if not ogo then
         -- F is on something without a name: let the usual 'F ready' speak
         if now > w.check_at + 0.5 then want = nil prompt.reannounce = true end
@@ -6546,7 +6564,15 @@ local function update_want(now, on)
     local oname = owner and (owner:gsub(", pick it up$", ""):gsub(", save game$", "")) or nil
     -- the story binoculars are the game's "Lookout point" (10/19: "F is on the
     -- Lookout point, not the Binoculars, story scene", then it turned away)
-    if same_thing(ogo, w) or (oname and (oname == w.name or (oname == "Lookout point" and w.name:find("^Binoculars")) or (oname:lower():find("cannon") and w.name:lower():find("cannon")))) then
+    -- 11/26 Ch11: "F is on the Rail Car, not the second mine cart" / "Coop Move Up, not the
+    -- wall where you boost Luis": same object, our name. Not an item, within 1.5 m = same.
+    local near_same = false
+    pcall(function()
+        if owner and owner:find(", pick it up$") then return end
+        local q = ogo:call("get_Transform"):call("get_Position")
+        near_same = w.pos and ((q.x - w.pos.x) ^ 2 + (q.z - w.pos.z) ^ 2) < 1.5 ^ 2 and math.abs(q.y - w.pos.y) < 2
+    end)
+    if near_same or same_thing(ogo, w) or (oname and (oname == w.name or (oname == "Lookout point" and w.name:find("^Binoculars")) or (oname:lower():find("cannon") and w.name:lower():find("cannon")))) then
         want = nil
         prompt.said_at = now
         log.info("[RE4Access] F check: on " .. w.name)
@@ -6581,6 +6607,7 @@ local function update_prompt(now)
             prompt.said_at = now
             local owner, ogo = prompt_owner()
             if owner then owner = owner:gsub("Cannon V2", "cannon") end
+            if owner == "Map Icon Only" then owner = "the marked spot" end -- 11/26 Ch11 painted rock
             -- a picked-up item stays selected; don't compare against it (10/13)
             local sel_ok = selected and selected.go and not (selected.item and not (function()
                 local okx, gone = pcall(function() return selected.go:call("get_DrawSelf") end)
@@ -6644,6 +6671,7 @@ local function update_prompt(now)
     if on and prompt.on then
         local owner, ogo = prompt_owner()
             if owner then owner = owner:gsub("Cannon V2", "cannon") end
+            if owner == "Map Icon Only" then owner = "the marked spot" end -- 11/26 Ch11 painted rock
         if ogo and prompt.ogo and ogo ~= prompt.ogo and now - prompt.said_at > 1 and not want
             and not (RE4Access.route and RE4Access.route.active()) then
             prompt.said_at = now
@@ -6685,6 +6713,7 @@ local function update_prompt(now)
         if on then
             local owner, ogo = prompt_owner()
             if owner then owner = owner:gsub("Cannon V2", "cannon") end
+            if owner == "Map Icon Only" then owner = "the marked spot" end -- 11/26 Ch11 painted rock
             if not owner then
                 pcall(function() kick = #enemies(G.player_pos(), 3) > 0 end)
             end
@@ -11336,11 +11365,45 @@ RE4Access.cantdie = CD
 re.on_frame(function()
     if RE4Access.cantdie ~= CD then return end
     local now = os.clock()
-    if now - CD.at < 0.2 then return end
+    -- 11/26 evening Krauser log: the game clears Invincible on every hit Leon takes; at
+    -- 0.2 s the flag stayed off long enough for a follow-up blow (Leon died once in this
+    -- fight with can't die on). Re-apply about every frame now; the blast-wall list below
+    -- is still only rebuilt every 3 s.
+    if now - CD.at < 0.015 then return end
     CD.at = now
     pcall(function()
         local G = RE4Access.game
         local on = G and G.cant_die and true or false
+        -- 11/26 Ch11 blast wall: with these flags on, Leon died every time the dynamite
+        -- went off, even 15 m away (5 tries); with them off he lived at full health.
+        -- While any dynamite fuse burns (GmBlastWall _IsIgnition, not yet done), keep
+        -- the flags off. The list of blast walls is looked up every 3 s.
+        if on then
+            if not CD.walls_at or now - CD.walls_at > 3 then
+                CD.walls_at = now
+                CD.walls = {}
+                pcall(function()
+                    local gm = sdk.get_managed_singleton("chainsaw.GimmickManager")
+                    for _, e in ipairs(gm:get_field("_Core"):get_field("_entries"):get_elements()) do
+                        local core = e:get_field("value")
+                        if core then pcall(function()
+                            local bw = core:call("get_GameObject"):call("getComponent(System.Type)", sdk.typeof("chainsaw.GmBlastWall"))
+                            if bw then CD.walls[#CD.walls + 1] = { bw = bw, core = core } end
+                        end) end
+                    end
+                end)
+            end
+            for _, w in ipairs(CD.walls or {}) do
+                local okb, lit = pcall(function()
+                    return w.bw:get_field("_IsIgnition") and (tonumber(w.bw:get_field("_Rno")) or 0) < 5
+                end)
+                if okb and lit then
+                    on = false
+                    if not CD.blast_said then CD.blast_said = true log.info("[RE4Access] can't die paused: dynamite fuse burning") end
+                end
+            end
+            if on then CD.blast_said = nil end
+        end
         if not on and not CD.was then return end
         local hp = sdk.get_managed_singleton("chainsaw.CharacterManager"):call("getPlayerContextRef"):call("get_HitPoint")
         if not hp then return end

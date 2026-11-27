@@ -58,3 +58,51 @@
 1920 | Luis picks up a long wooden pole and grins, holding it like a knight's lance.
 2160 | He swings it out wide. Leon takes it from him and tosses it aside.
 2400 | Luis throws his arms up in mock protest, then follows Leon.
+
+[1_10046] Chapter 11: the foundry, two giants
+0 | A rusty barred grate in a rock wall, glowing orange light behind it.
+360 | Leon and Luis pry the grate open together.
+600 | Leon stops and lets Luis go first through the narrow way.
+900 | A giant lunges out of the dark and grabs at Leon.
+1140 | Luis grabs Leon's hand and hauls him clear.
+1260 | Inside a huge foundry lit orange by molten metal: a giant in chain mail and scrap iron armor, a second one beside it.
+1740 | Leon is thrown across the metal floor. Luis jokes that now Leon owes him.
+2100 | Luis helps Leon up: now they are even. The armored giant stomps toward them.
+
+[1_20107] Luis plants the dynamite
+0 | Luis climbs onto the railing above the armored giant, a bundle of red dynamite in his hand.
+120 | He jumps down onto the giant's back.
+240 | He jams the dynamite into its armor and shouts: Delivery!
+360 | The red dynamite is stuck to the giant's back. Shoot it.
+
+[1_20127] The armored giant falls
+0 | The explosion tears the armor apart.
+240 | The giant rears up, arms raised, then crashes to the grated floor, its jaw hanging open. It is dead.
+
+[1_10047] End of the cart ride: the fall into the hive
+0 | Leon and Luis in the cart, staring ahead.
+240 | A crane hook over a broken track. Luis: You're kidding.
+600 | Both brace in the cart as it flies off the rails.
+1080 | The cart smashes through a wooden ramp. Leon and Luis are thrown through the air.
+1500 | They land hard among broken wood in a dark cavern full of hanging insect hives.
+2100 | Luis picks himself up: give a 3 2 1 next time. Leon brushes him off and walks on.
+
+[1_10048] Krauser
+0 | A caged elevator rises into a dark industrial hall.
+480 | Leon and Luis step out. Luis: the fresh air is calling our names.
+1080 | Luis is suddenly grabbed and thrown; Leon spins around.
+1620 | Out of the shadows steps Jack Krauser, Leon's old army instructor: red beret, combat vest, a knife.
+2700 | Leon recognizes him: Major Krauser? Why?
+3180 | Krauser lunges. Leon blocks with his own knife; the blades lock.
+4320 | Krauser grins through the struggle: not bad.
+5400 | Krauser stands on a metal catwalk, knife ready. Leon faces him. The fight begins.
+
+[1_10049] After Krauser: Luis and the plan
+60 | Leon, battered, knife still raised.
+660 | Luis raises a pistol from the shadows.
+1140 | From above: Krauser backs away across the catwalks and leaves. You haven't changed a damn bit, he says.
+1740 | Krauser glares, then is gone.
+2340 | Luis kneels against a tarp, looking at Leon: not looking good, eh my friend? Take this.
+3480 | Luis lights a cigarette, the lighter flaring in the dark.
+4680 | Luis asks quietly: people can change, right?
+5820 | Leon watches him. Darkness. End of Chapter 11.

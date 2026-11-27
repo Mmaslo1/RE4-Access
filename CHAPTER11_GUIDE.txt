@@ -1,0 +1,44 @@
+RE4 Access - Chapter 11 guide (the mines)
+Played start to end with the mod on 11/26/2026. Press N at any time: it names the next step
+and walks you there. These notes say the same in one place.
+
+1. Start: you come out of the elevator. Press N: it walks you up a ladder (hold F 1 second
+   at the ladder) to a painted rock blocking a tunnel. You need Dynamite for it.
+   N goes on to the quarry by itself.
+
+2. The quarry: you jump down a ledge (tap F at the edge). Villagers attack, a chainsaw man
+   among them. Hold L and press K. Then N walks you up into a small hut with a control panel.
+   The lever there: HOLD F down for 1 second. A bridge lowers.
+   If F picks up money lying there, hold F again.
+
+3. N takes you out of the hut, over the bridge, to the Dynamite on some boxes: press F, then
+   F again to close the item screen.
+
+4. N takes you back to the painted rock: press F, Enter on Dynamite, Enter on Use.
+   Then press N AT ONCE and hold Shift and W: N runs you out of the blast along a safe path.
+   The blast comes after 6 seconds.
+
+5. Past the tunnel: a story event (press F), then two giants.
+   - First the giant WITHOUT armor: keep your distance, hold L, press K.
+   - Then the armored giant: keep 8 to 14 meters away (when it comes close, run with
+     Shift and W, then turn back). Hold L: the mod aims at the padlock on its armor (or the
+     explosive on its back if Luis planted one). Press K again and again until it dies.
+
+6. Boost Luis over a wall: hold F 1 second. He opens the gate. N walks you to the mine cart:
+   hold F 1 second to get in.
+
+7. Mine cart ride 1: when the mod says Lean A or Lean D, hold that key until it says Straight.
+   Hold L and press K on every track switch, barricade and red barrel it calls.
+
+8. A short stop, then the second mine cart (N, hold F 1 second).
+   Ride 2: the CHAINSAW MAN rides beside you. Keep L held the whole time and press K about
+   3 times a second. He must die before the end of the long stretch, or he wrecks the cart
+   and you die even at full health. The mod tells you his health every 3 seconds.
+   Also shoot the barricade, the red barrels and the track switch near the end.
+
+9. The cart crashes into a cave with insect hives (the yellow sacks: ignore them).
+   N walks you to the elevator button: hold F 1 second. A long cutscene follows.
+
+10. Krauser, knife only: hold Space and press K again and again, stay close. When the mod
+    says Evade or Lunge, press the key it names. Press U for his health. When he is down,
+    the chapter ends.

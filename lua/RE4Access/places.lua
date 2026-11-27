@@ -538,7 +538,17 @@ function P.update(pos, now)
     if b and not listed(b) then b = nil end
     local id = b and b.id or false
     if id == tick.cand then tick.cand_n = tick.cand_n + 1 else tick.cand, tick.cand_n = id, 1 end
-    if tick.cand_n == 2 and (P.inside or false) ~= id then
+    -- 11/26 Ch11 hive elevator: going up it said "Entered Building J / Left Building J /
+    -- Entered K..." every few seconds. Rising or falling fast (lift, drop) = no speech.
+    local vfast = false
+    if tick.vy_at and now > tick.vy_at then
+        vfast = math.abs(pos.y - tick.vy_y) / (now - tick.vy_at) > 1.2
+    end
+    tick.vy_at, tick.vy_y = now, pos.y
+    if vfast then tick.vfast_until = now + 2 end
+    if tick.cand_n == 2 and (P.inside or false) ~= id and tick.vfast_until and now < tick.vfast_until then
+        P.inside = id or nil
+    elseif tick.cand_n == 2 and (P.inside or false) ~= id then
         local old = building(P.inside)
         P.inside = id or nil
         local route_on = R() and R().active()
